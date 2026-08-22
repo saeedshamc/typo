@@ -1,0 +1,106 @@
+:root {
+  --bg: #1e1e2e;
+  --surface: #2a2a3c;
+  --text: #e0e0f0;
+  --muted: #8888a0;
+  --correct: #4ade80;
+  --incorrect: #f87171;
+  --accent: #7c8cff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Vazirmatn", "Segoe UI", sans-serif;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+fieldset {
+  border: none;
+  display: inline-flex;
+  gap: 0.4rem;
+  margin: 0 0.5rem 0.5rem 0;
+  padding: 0;
+}
+
+fieldset legend {
+  color: var(--muted);
+  font-size: 0.75rem;
+  width: 100%;
+}
+
+button {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+}
+
+button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.start-button {
+  display: block;
+  margin-top: 1rem;
+  background: var(--accent);
+  color: #10101a;
+  font-weight: 600;
+}
+
+.typing-area {
+  position: relative;
+  margin-top: 2rem;
+  font-size: 1.4rem;
+  line-height: 2.2rem;
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.typing-text { unicode-bidi: plaintext; }
+
+.char-pending { color: var(--muted); }
+.char-correct { color: var(--text); }
+.char-incorrect { color: var(--incorrect); text-decoration: underline; }
+.char-cursor { border-bottom: 2px solid var(--accent); }
+
+.typing-input-sink {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+.timer {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+.stats-panel { margin-top: 1.5rem; }
+
+.live-stats { display: flex; gap: 2rem; }
+.stat-value { font-size: 2rem; display: block; }
+.stat-value-error { color: var(--incorrect); }
+.stat-label { color: var(--muted); font-size: 0.8rem; }
+
+.warning { color: #fbbf24; }
+
+.error-fallback {
+  background: #3a1f1f;
+  border: 1px solid var(--incorrect);
+  border-radius: 8px;
+  padding: 1rem;
+}

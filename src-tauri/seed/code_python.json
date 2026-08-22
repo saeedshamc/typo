@@ -1,0 +1,38 @@
+[
+  {
+    "category": "code",
+    "language": "python",
+    "difficulty": "beginner",
+    "body": "def add(a, b):\n    return a + b\n\nprint(add(2, 3))"
+  },
+  {
+    "category": "code",
+    "language": "python",
+    "difficulty": "beginner",
+    "body": "numbers = [1, 2, 3, 4, 5]\ndoubled = [n * 2 for n in numbers]\nprint(doubled)"
+  },
+  {
+    "category": "code",
+    "language": "python",
+    "difficulty": "intermediate",
+    "body": "class Stack:\n    def __init__(self):\n        self._items = []\n\n    def push(self, item):\n        self._items.append(item)\n\n    def pop(self):\n        return self._items.pop() if self._items else None"
+  },
+  {
+    "category": "code",
+    "language": "python",
+    "difficulty": "intermediate",
+    "body": "import json\n\ndef load_config(path):\n    with open(path, 'r', encoding='utf-8') as f:\n        return json.load(f)"
+  },
+  {
+    "category": "code",
+    "language": "python",
+    "difficulty": "advanced",
+    "body": "from functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib(n):\n    return n if n < 2 else fib(n - 1) + fib(n - 2)"
+  },
+  {
+    "category": "code",
+    "language": "python",
+    "difficulty": "advanced",
+    "body": "async def gather_results(coros):\n    try:\n        return await asyncio.gather(*coros, return_exceptions=True)\n    except Exception as exc:\n        logger.error('gather failed: %s', exc)\n        raise"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "beginner",
+    "body": "The quick brown fox jumps over the lazy dog. This simple sentence contains every letter of the alphabet at least once."
+  },
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "beginner",
+    "body": "Practice makes perfect. The more you type every day, the faster and more accurate you will become over time."
+  },
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "intermediate",
+    "body": "Building reliable software requires careful attention to error handling, thorough testing, and clear documentation. Teams that skip these steps often pay for it later in bugs and downtime."
+  },
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "intermediate",
+    "body": "Climate patterns are shifting faster than many models predicted a decade ago, forcing researchers to reconsider assumptions about long-term stability across ecosystems."
+  },
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "advanced",
+    "body": "Distributed systems introduce a class of failures that simply do not exist in single-machine programs: partial network partitions, clock skew, and the impossibility of distinguishing a slow node from a dead one."
+  },
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "advanced",
+    "body": "Epistemic humility, when applied rigorously, does not mean withholding judgment indefinitely; it means calibrating confidence to the actual strength of the available evidence, and revising readily when that evidence changes."
+  }
+]

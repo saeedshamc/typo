@@ -1,0 +1,38 @@
+[
+  {
+    "category": "code",
+    "language": "javascript",
+    "difficulty": "beginner",
+    "body": "function add(a, b) {\n  return a + b;\n}\n\nconsole.log(add(2, 3));"
+  },
+  {
+    "category": "code",
+    "language": "javascript",
+    "difficulty": "beginner",
+    "body": "const numbers = [1, 2, 3, 4, 5];\nconst doubled = numbers.map(n => n * 2);\nconsole.log(doubled);"
+  },
+  {
+    "category": "code",
+    "language": "javascript",
+    "difficulty": "intermediate",
+    "body": "async function fetchUser(id) {\n  const res = await fetch(`/api/users/${id}`);\n  if (!res.ok) throw new Error('failed to fetch user');\n  return res.json();\n}"
+  },
+  {
+    "category": "code",
+    "language": "javascript",
+    "difficulty": "intermediate",
+    "body": "class EventEmitter {\n  constructor() { this.listeners = {}; }\n  on(event, cb) {\n    (this.listeners[event] ??= []).push(cb);\n  }\n  emit(event, ...args) {\n    (this.listeners[event] || []).forEach(cb => cb(...args));\n  }\n}"
+  },
+  {
+    "category": "code",
+    "language": "javascript",
+    "difficulty": "advanced",
+    "body": "const memoize = (fn) => {\n  const cache = new Map();\n  return (...args) => {\n    const key = JSON.stringify(args);\n    if (!cache.has(key)) cache.set(key, fn(...args));\n    return cache.get(key);\n  };\n};"
+  },
+  {
+    "category": "code",
+    "language": "javascript",
+    "difficulty": "advanced",
+    "body": "export function debounce(fn, delay) {\n  let timer = null;\n  return (...args) => {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), delay);\n  };\n}"
+  }
+]
