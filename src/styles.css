@@ -145,6 +145,31 @@ button.active {
 
 .warning { color: #fbbf24; }
 
+.muted { color: var(--muted); }
+
+.personal-bests,
+.history {
+  margin-top: 1.25rem;
+}
+
+.personal-bests h3,
+.history h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.personal-bests ul,
+.history ul {
+  margin: 0;
+  padding-inline-start: 1.2rem;
+}
+
+.personal-bests li,
+.history li {
+  margin-bottom: 0.35rem;
+  color: var(--text);
+}
+
 .error-fallback {
   background: #3a1f1f;
   border: 1px solid var(--incorrect);
