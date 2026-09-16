@@ -43,11 +43,12 @@ export function CategorySelector() {
       startSession: s.startSession,
     }));
 
-  const disabled = phase === "running";
+  const locked = phase === "running" || phase === "paused";
+  const canStart = phase === "idle" || phase === "finished";
 
   return (
     <div className="category-selector">
-      <fieldset disabled={disabled}>
+      <fieldset disabled={locked}>
         <legend>نوع متن</legend>
         {CATEGORIES.map((c) => (
           <button
@@ -61,7 +62,7 @@ export function CategorySelector() {
       </fieldset>
 
       {category === "code" && (
-        <fieldset disabled={disabled}>
+        <fieldset disabled={locked}>
           <legend>زبان برنامه‌نویسی</legend>
           {CODE_LANGUAGES.map((l) => (
             <button
@@ -75,7 +76,7 @@ export function CategorySelector() {
         </fieldset>
       )}
 
-      <fieldset disabled={disabled}>
+      <fieldset disabled={locked}>
         <legend>سطح دشواری</legend>
         {DIFFICULTIES.map((d) => (
           <button
@@ -88,7 +89,7 @@ export function CategorySelector() {
         ))}
       </fieldset>
 
-      <fieldset disabled={disabled}>
+      <fieldset disabled={locked}>
         <legend>حالت</legend>
         {MODES.map((m) => (
           <button
@@ -102,7 +103,7 @@ export function CategorySelector() {
       </fieldset>
 
       {mode === "timed" && (
-        <fieldset disabled={disabled}>
+        <fieldset disabled={locked}>
           <legend>مدت زمان</legend>
           {DURATIONS.map((d) => (
             <button
@@ -116,9 +117,11 @@ export function CategorySelector() {
         </fieldset>
       )}
 
-      <button className="start-button" disabled={disabled} onClick={() => startSession()}>
-        شروع تست
-      </button>
+      {canStart && (
+        <button className="start-button" onClick={() => startSession()}>
+          {phase === "finished" ? "شروع دوباره" : "شروع تست"}
+        </button>
+      )}
     </div>
   );
 }

@@ -59,6 +59,38 @@ button.active {
   font-weight: 600;
 }
 
+.start-button.inline {
+  display: inline-block;
+  margin-top: 0;
+}
+
+.session-controls {
+  margin-top: 1rem;
+}
+
+.session-controls-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.session-controls button.danger {
+  border-color: var(--incorrect);
+  color: var(--incorrect);
+}
+
+.session-finished-summary {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.session-paused-hint {
+  color: var(--muted);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
 .typing-area {
   position: relative;
   margin-top: 2rem;

@@ -3,6 +3,7 @@ import { CategorySelector } from "./components/CategorySelector";
 import { Timer } from "./components/Timer";
 import { TypingArea } from "./components/TypingArea";
 import { StatsPanel } from "./components/StatsPanel";
+import { SessionControls } from "./components/SessionControls";
 import { useTypingStore } from "./store/useTypingStore";
 
 export default function App() {
@@ -20,6 +21,10 @@ export default function App() {
 
       {phase !== "idle" && (
         <>
+          <ErrorBoundary label="کنترل سشن">
+            <SessionControls />
+          </ErrorBoundary>
+
           <ErrorBoundary label="تایمر">
             <Timer />
           </ErrorBoundary>
