@@ -40,11 +40,16 @@ npm run tauri dev
 نیازمندی‌های سیستم برای Tauri v2 (Rust + وابستگی‌های native) طبق مستندات رسمی:
 https://tauri.app/start/prerequisites/
 
-## تست
+## حالت ادیتور کد
 
-```bash
-npm test
-```
+وقتی دسته‌ی «کد برنامه‌نویسی» را انتخاب می‌کنی، ناحیه‌ی تایپ مثل یک ادیتور واقعی رفتار می‌کند:
+
+- فونت monospace، شماره خط، هایلایت خط جاری
+- Tab و Enter مطابق متن سورس
+- هایلایت سبک سینتکس برای متن هنوز تایپ‌نشده
+- نوار وضعیت با Ln/Col و نام زبان
+
+زبان‌های پشتیبانی‌شده: JavaScript، TypeScript، Python، C++، Rust، Go، Java، C#، PHP، Kotlin، Ruby، Swift، SQL.
 
 ## بیلد نصب‌کننده
 

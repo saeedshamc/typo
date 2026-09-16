@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "test": "node --experimental-strip-types --test src/utils/__tests__/typingUtils.test.ts",
+    "test": "node --experimental-strip-types --test src/utils/__tests__/*.test.ts",
     "test:vitest": "node ./node_modules/vitest/vitest.mjs run --config vitest.config.js"
   },
   "dependencies": {

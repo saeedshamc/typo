@@ -87,6 +87,140 @@ body {
   background: color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
+.code-editor {
+  --editor-bg: #1a1b26;
+  --editor-gutter: #16161e;
+  --editor-line: #1f2335;
+  --editor-border: #2a2b3d;
+  --tok-keyword: #bb9af7;
+  --tok-string: #9ece6a;
+  --tok-comment: #565f89;
+  --tok-number: #ff9e64;
+  --tok-type: #7dcfff;
+  --tok-punct: #89ddff;
+
+  position: relative;
+  margin-top: 1.5rem;
+  background: var(--editor-bg);
+  border: 1px solid var(--editor-border);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: text;
+  font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+  direction: ltr;
+  text-align: left;
+}
+
+.code-editor-tabbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: #12131a;
+  border-bottom: 1px solid var(--editor-border);
+  padding: 0.45rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.code-editor-tab {
+  padding: 0.25rem 0.7rem;
+  border-radius: 6px 6px 0 0;
+  color: var(--muted);
+}
+
+.code-editor-tab.active {
+  background: var(--editor-bg);
+  color: var(--text);
+  border: 1px solid var(--editor-border);
+  border-bottom-color: var(--editor-bg);
+}
+
+.code-editor-lang {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.code-editor-body {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  max-height: 420px;
+  overflow: auto;
+}
+
+.code-gutter {
+  background: var(--editor-gutter);
+  color: #565f89;
+  padding: 0.85rem 0.55rem;
+  text-align: right;
+  user-select: none;
+  min-width: 2.6rem;
+  border-inline-end: 1px solid var(--editor-border);
+}
+
+.code-gutter-line,
+.code-line {
+  min-height: 1.55em;
+  line-height: 1.55em;
+  white-space: pre;
+}
+
+.code-gutter-line.current,
+.code-line.current {
+  background: var(--editor-line);
+}
+
+.code-lines {
+  padding: 0.85rem 0.9rem;
+  overflow-x: auto;
+}
+
+.code-line.muted {
+  color: var(--muted);
+}
+
+.code-statusbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 0.35rem 0.75rem;
+  border-top: 1px solid var(--editor-border);
+  background: #12131a;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.code-editor .char-pending.tok-keyword { color: var(--tok-keyword); }
+.code-editor .char-pending.tok-string { color: var(--tok-string); }
+.code-editor .char-pending.tok-comment { color: var(--tok-comment); }
+.code-editor .char-pending.tok-number { color: var(--tok-number); }
+.code-editor .char-pending.tok-type { color: var(--tok-type); }
+.code-editor .char-pending.tok-punctuation { color: var(--tok-punct); }
+.code-editor .char-pending.tok-plain { color: #a9b1d6; }
+
+.code-editor .char-correct {
+  color: #c0caf5;
+}
+
+.code-editor .ws {
+  opacity: 0.35;
+}
+
+.code-newline-mark {
+  opacity: 0.55;
+  margin-inline-start: 0.15rem;
+}
+
+.code-editor.caret-block .char-cursor {
+  border-bottom: none;
+  outline: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.category-selector fieldset {
+  flex-wrap: wrap;
+}
+
 fieldset {
   border: none;
   display: inline-flex;
