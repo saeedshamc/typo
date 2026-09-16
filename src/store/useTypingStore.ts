@@ -14,6 +14,20 @@ import { charsMatch } from "../utils/rtlCompare";
 
 const AUTOSAVE_INTERVAL_MS = 3000;
 
+const DIFFICULTY_ORDER: Difficulty[] = ["beginner", "intermediate", "advanced"];
+
+function suggestNextDifficulty(current: Difficulty, accuracy: number): Difficulty | null {
+  const index = DIFFICULTY_ORDER.indexOf(current);
+  if (index < 0) return null;
+  if (accuracy >= 95 && index < DIFFICULTY_ORDER.length - 1) {
+    return DIFFICULTY_ORDER[index + 1];
+  }
+  if (accuracy < 80 && index > 0) {
+    return DIFFICULTY_ORDER[index - 1];
+  }
+  return null;
+}
+
 interface TypingState {
   // ----- selection / config -----
   category: Category;
@@ -44,6 +58,7 @@ interface TypingState {
   autosaveHandle: ReturnType<typeof setInterval> | null;
   errorMessage: string | null;
   pendingResume: Progress | null;
+  suggestedDifficulty: Difficulty | null;
 
   setSelection: (partial: Partial<{
     category: Category;
@@ -58,6 +73,7 @@ interface TypingState {
   checkForResume: () => Promise<void>;
   acceptResume: () => void;
   dismissResume: () => Promise<void>;
+  clearDifficultySuggestion: () => void;
   typeChar: (ch: string) => void;
   removeLastChar: () => void;
   tick: (deltaMs: number) => void;
@@ -119,8 +135,11 @@ export const useTypingStore = create<TypingState>((set, get) => ({
   autosaveHandle: null,
   errorMessage: null,
   pendingResume: null,
+  suggestedDifficulty: null,
 
   setSelection: (partial) => set(partial),
+
+  clearDifficultySuggestion: () => set({ suggestedDifficulty: null }),
 
   startSession: async () => {
     const { category, language, difficulty, mode } = get();
@@ -345,7 +364,8 @@ export const useTypingStore = create<TypingState>((set, get) => ({
   finish: async () => {
     const s = get();
     if (s.autosaveHandle) clearInterval(s.autosaveHandle);
-    set({ phase: "finished", autosaveHandle: null });
+    const suggestedDifficulty = suggestNextDifficulty(s.difficulty, s.accuracy);
+    set({ phase: "finished", autosaveHandle: null, suggestedDifficulty });
 
     try {
       await invoke("finish_session", {
@@ -378,6 +398,7 @@ export const useTypingStore = create<TypingState>((set, get) => ({
       accuracy: 100,
       autosaveHandle: null,
       errorMessage: null,
+      suggestedDifficulty: null,
     });
   },
 }));

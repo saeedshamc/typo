@@ -170,6 +170,18 @@ button.active {
   color: var(--text);
 }
 
+.difficulty-suggestion {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--accent);
+}
+
+.difficulty-suggestion p {
+  margin: 0 0 0.6rem;
+}
+
 .error-fallback {
   background: #3a1f1f;
   border: 1px solid var(--incorrect);

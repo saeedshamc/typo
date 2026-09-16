@@ -45,6 +45,9 @@ export function StatsPanel() {
   const totalErrors = useTypingStore((s) => s.totalErrors);
   const phase = useTypingStore((s) => s.phase);
   const errorMessage = useTypingStore((s) => s.errorMessage);
+  const suggestedDifficulty = useTypingStore((s) => s.suggestedDifficulty);
+  const setSelection = useTypingStore((s) => s.setSelection);
+  const clearDifficultySuggestion = useTypingStore((s) => s.clearDifficultySuggestion);
 
   const [history, setHistory] = useState<SessionRecord[]>([]);
   const [historyError, setHistoryError] = useState<string | null>(null);
@@ -83,6 +86,36 @@ export function StatsPanel() {
       </div>
 
       {errorMessage && <p className="warning">{errorMessage}</p>}
+
+      {phase === "finished" && suggestedDifficulty && (
+        <div className="difficulty-suggestion">
+          <p>
+            پیشنهاد سطح بعدی:{" "}
+            <strong>
+              {suggestedDifficulty === "beginner"
+                ? "مبتدی"
+                : suggestedDifficulty === "intermediate"
+                  ? "متوسط"
+                  : "پیشرفته"}
+            </strong>
+          </p>
+          <div className="session-controls-actions">
+            <button
+              type="button"
+              className="start-button inline"
+              onClick={() => {
+                setSelection({ difficulty: suggestedDifficulty });
+                clearDifficultySuggestion();
+              }}
+            >
+              اعمال پیشنهاد
+            </button>
+            <button type="button" onClick={() => clearDifficultySuggestion()}>
+              رد کردن
+            </button>
+          </div>
+        </div>
+      )}
 
       {bests.length > 0 && (
         <div className="personal-bests">

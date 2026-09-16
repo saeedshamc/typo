@@ -94,15 +94,27 @@ pub fn get_text(
     language: Option<&str>,
     difficulty: &str,
 ) -> Result<TextItem, String> {
+    // Prefer texts whose symbol_density sits near the band for the chosen
+    // difficulty, then fall back to a random matching row.
+    let target_density = match difficulty {
+        "beginner" => 0.05,
+        "intermediate" => 0.12,
+        _ => 0.22,
+    };
+
     let query = format!(
         "SELECT {SELECT_COLS} FROM texts
          WHERE category = ?1 AND difficulty = ?2
            AND (?3 IS NULL OR language = ?3)
-         ORDER BY RANDOM() LIMIT 1"
+         ORDER BY ABS(symbol_density - ?4), RANDOM()
+         LIMIT 1"
     );
     let mut stmt = conn.prepare(&query).map_err(|e| e.to_string())?;
     let item = stmt
-        .query_row(params![category, difficulty, language], row_to_item)
+        .query_row(
+            params![category, difficulty, language, target_density],
+            row_to_item,
+        )
         .optional()
         .map_err(|e| e.to_string())?;
 
