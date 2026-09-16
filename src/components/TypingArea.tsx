@@ -30,12 +30,15 @@ export function TypingArea() {
     if (phase === "running") inputRef.current?.focus();
   }, [phase]);
 
+  const focusInput = () => {
+    if (phase === "running") inputRef.current?.focus();
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     const prevValue = shadowValueRef.current;
 
     if (newValue.length > prevValue.length) {
-      // Characters appended -- feed each new one to the store in order.
       const added = newValue.slice(prevValue.length);
       for (const ch of added) typeChar(ch);
     } else if (newValue.length < prevValue.length) {
@@ -49,7 +52,12 @@ export function TypingArea() {
   const rtl = isRtlText(currentText);
 
   return (
-    <div className="typing-area" dir={rtl ? "rtl" : "ltr"}>
+    <div
+      className="typing-area"
+      dir={rtl ? "rtl" : "ltr"}
+      onClick={focusInput}
+      role="presentation"
+    >
       <div className="typing-text" aria-hidden="true">
         {currentText.split("").map((ch, i) => {
           let className = "char-pending";

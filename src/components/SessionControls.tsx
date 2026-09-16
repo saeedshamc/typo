@@ -10,6 +10,8 @@ export function SessionControls() {
   const reset = useTypingStore((s) => s.reset);
   const finish = useTypingStore((s) => s.finish);
   const startSession = useTypingStore((s) => s.startSession);
+  const startPracticeAgain = useTypingStore((s) => s.startPracticeAgain);
+  const lastPracticeText = useTypingStore((s) => s.lastPracticeText);
   const mode = useTypingStore((s) => s.mode);
 
   if (phase === "idle") return null;
@@ -54,6 +56,11 @@ export function SessionControls() {
             >
               تست جدید با همین تنظیمات
             </button>
+            {mode === "practice" && lastPracticeText && (
+              <button type="button" onClick={() => startPracticeAgain()}>
+                همان متن دوباره
+              </button>
+            )}
             <button type="button" onClick={() => reset()}>
               بازگشت به انتخاب
             </button>
@@ -62,6 +69,9 @@ export function SessionControls() {
       )}
 
       {phase === "paused" && <p className="session-paused-hint">سشن متوقف است</p>}
+      {phase === "running" && mode === "practice" && (
+        <p className="session-paused-hint">تمرین آزاد: با دکمه پایان سشن تمام می‌شود</p>
+      )}
     </div>
   );
 }
