@@ -1,0 +1,38 @@
+[
+  {
+    "category": "code",
+    "language": "kotlin",
+    "difficulty": "beginner",
+    "body": "fun add(a: Int, b: Int): Int = a + b\n\nfun main() {\n    println(add(2, 3))\n}"
+  },
+  {
+    "category": "code",
+    "language": "kotlin",
+    "difficulty": "beginner",
+    "body": "fun main() {\n    val numbers = listOf(1, 2, 3, 4, 5)\n    val doubled = numbers.map { it * 2 }\n    println(doubled)\n}"
+  },
+  {
+    "category": "code",
+    "language": "kotlin",
+    "difficulty": "intermediate",
+    "body": "fun findUser(id: Long): Map<String, Any>? {\n    if (id <= 0) return null\n    return mapOf(\"id\" to id, \"name\" to \"user-$id\")\n}"
+  },
+  {
+    "category": "code",
+    "language": "kotlin",
+    "difficulty": "intermediate",
+    "body": "class Stack<T> {\n    private val items = mutableListOf<T>()\n    fun push(value: T) = items.add(value)\n    fun pop(): T? = items.removeLastOrNull()\n}"
+  },
+  {
+    "category": "code",
+    "language": "kotlin",
+    "difficulty": "advanced",
+    "body": "fun <T, K> List<T>.groupByKey(keyFn: (T) -> K): Map<K, List<T>> {\n    val grouped = linkedMapOf<K, MutableList<T>>()\n    for (item in this) {\n        grouped.getOrPut(keyFn(item)) { mutableListOf() }.add(item)\n    }\n    return grouped\n}"
+  },
+  {
+    "category": "code",
+    "language": "kotlin",
+    "difficulty": "advanced",
+    "body": "suspend fun fetchJson(url: String): String {\n    return httpClient.get(url).bodyAsText()\n}"
+  }
+]

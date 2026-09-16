@@ -14,6 +14,12 @@
   {
     "category": "code",
     "language": "javascript",
+    "difficulty": "beginner",
+    "body": "const user = { name: 'Ada', active: true };\nif (user.active) {\n  console.log(`hello ${user.name}`);\n}"
+  },
+  {
+    "category": "code",
+    "language": "javascript",
     "difficulty": "intermediate",
     "body": "async function fetchUser(id) {\n  const res = await fetch(`/api/users/${id}`);\n  if (!res.ok) throw new Error('failed to fetch user');\n  return res.json();\n}"
   },
@@ -22,6 +28,12 @@
     "language": "javascript",
     "difficulty": "intermediate",
     "body": "class EventEmitter {\n  constructor() { this.listeners = {}; }\n  on(event, cb) {\n    (this.listeners[event] ??= []).push(cb);\n  }\n  emit(event, ...args) {\n    (this.listeners[event] || []).forEach(cb => cb(...args));\n  }\n}"
+  },
+  {
+    "category": "code",
+    "language": "javascript",
+    "difficulty": "intermediate",
+    "body": "export function groupBy(items, keyFn) {\n  return items.reduce((acc, item) => {\n    const key = keyFn(item);\n    (acc[key] ??= []).push(item);\n    return acc;\n  }, {});\n}"
   },
   {
     "category": "code",

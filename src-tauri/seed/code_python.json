@@ -14,6 +14,12 @@
   {
     "category": "code",
     "language": "python",
+    "difficulty": "beginner",
+    "body": "name = 'Ada'\nif name:\n    print(f'hello {name}')"
+  },
+  {
+    "category": "code",
+    "language": "python",
     "difficulty": "intermediate",
     "body": "class Stack:\n    def __init__(self):\n        self._items = []\n\n    def push(self, item):\n        self._items.append(item)\n\n    def pop(self):\n        return self._items.pop() if self._items else None"
   },
@@ -22,6 +28,12 @@
     "language": "python",
     "difficulty": "intermediate",
     "body": "import json\n\ndef load_config(path):\n    with open(path, 'r', encoding='utf-8') as f:\n        return json.load(f)"
+  },
+  {
+    "category": "code",
+    "language": "python",
+    "difficulty": "intermediate",
+    "body": "from collections import defaultdict\n\ndef group_by(items, key_fn):\n    grouped = defaultdict(list)\n    for item in items:\n        grouped[key_fn(item)].append(item)\n    return dict(grouped)"
   },
   {
     "category": "code",

@@ -14,6 +14,18 @@
   {
     "category": "english",
     "language": null,
+    "difficulty": "beginner",
+    "body": "A calm morning walk can clear the mind. Small habits repeated daily often matter more than rare bursts of effort."
+  },
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "beginner",
+    "body": "Good typing posture keeps your wrists neutral and your shoulders relaxed. Short breaks help you stay accurate longer."
+  },
+  {
+    "category": "english",
+    "language": null,
     "difficulty": "intermediate",
     "body": "Building reliable software requires careful attention to error handling, thorough testing, and clear documentation. Teams that skip these steps often pay for it later in bugs and downtime."
   },
@@ -26,6 +38,12 @@
   {
     "category": "english",
     "language": null,
+    "difficulty": "intermediate",
+    "body": "Clear writing is a form of respect for the reader. Cut filler, prefer concrete nouns, and put the main point early so busy people can decide what to do next."
+  },
+  {
+    "category": "english",
+    "language": null,
     "difficulty": "advanced",
     "body": "Distributed systems introduce a class of failures that simply do not exist in single-machine programs: partial network partitions, clock skew, and the impossibility of distinguishing a slow node from a dead one."
   },
@@ -34,5 +52,11 @@
     "language": null,
     "difficulty": "advanced",
     "body": "Epistemic humility, when applied rigorously, does not mean withholding judgment indefinitely; it means calibrating confidence to the actual strength of the available evidence, and revising readily when that evidence changes."
+  },
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "advanced",
+    "body": "Latency budgets force product teams to confront trade-offs that marketing copy prefers to hide: every animation, analytics call, and speculative prefetch competes for the same scarce milliseconds on a cold cache."
   }
 ]

@@ -27,6 +27,10 @@ const SEED_PERSIAN: &str = include_str!("../seed/persian.json");
 const SEED_ENGLISH: &str = include_str!("../seed/english.json");
 const SEED_CODE_JS: &str = include_str!("../seed/code_javascript.json");
 const SEED_CODE_PY: &str = include_str!("../seed/code_python.json");
+const SEED_CODE_CPP: &str = include_str!("../seed/code_cpp.json");
+const SEED_CODE_RUST: &str = include_str!("../seed/code_rust.json");
+const SEED_CODE_PHP: &str = include_str!("../seed/code_php.json");
+const SEED_CODE_KOTLIN: &str = include_str!("../seed/code_kotlin.json");
 
 /// Rough symbol-density score used for auto-leveling: fraction of
 /// non-alphanumeric, non-whitespace characters. Code with lots of
@@ -40,13 +44,20 @@ fn symbol_density(text: &str) -> f64 {
     symbols as f64 / total as f64
 }
 
+/// Inserts any seed rows that are not already present (matched by body).
+/// Safe to call on every startup so expanding the seed bank upgrades
+/// existing installs without wiping user history.
 pub fn seed_if_empty(conn: &Connection) -> rusqlite::Result<()> {
-    let count: i64 = conn.query_row("SELECT COUNT(*) FROM texts", [], |r| r.get(0))?;
-    if count > 0 {
-        return Ok(());
-    }
-
-    let all_seed = [SEED_PERSIAN, SEED_ENGLISH, SEED_CODE_JS, SEED_CODE_PY];
+    let all_seed = [
+        SEED_PERSIAN,
+        SEED_ENGLISH,
+        SEED_CODE_JS,
+        SEED_CODE_PY,
+        SEED_CODE_CPP,
+        SEED_CODE_RUST,
+        SEED_CODE_PHP,
+        SEED_CODE_KOTLIN,
+    ];
     let tx = conn.unchecked_transaction()?;
     for raw in all_seed {
         let items: Vec<SeedItem> = serde_json::from_str(raw).unwrap_or_default();
@@ -54,7 +65,8 @@ pub fn seed_if_empty(conn: &Connection) -> rusqlite::Result<()> {
             let density = symbol_density(&item.body);
             tx.execute(
                 "INSERT INTO texts (category, language, difficulty, symbol_density, body)
-                 VALUES (?1, ?2, ?3, ?4, ?5)",
+                 SELECT ?1, ?2, ?3, ?4, ?5
+                 WHERE NOT EXISTS (SELECT 1 FROM texts WHERE body = ?5)",
                 params![item.category, item.language, item.difficulty, density, item.body],
             )?;
         }
@@ -96,8 +108,6 @@ pub fn get_text(
 
     match item {
         Some(item) => Ok(item),
-        // Bank has nothing matching -> never leave the user with no text,
-        // fall back to procedural generation instead of erroring out.
         None => Ok(generate_procedural(category, language, difficulty)),
     }
 }
@@ -134,20 +144,10 @@ pub fn get_endless_chunk(
 
     match item {
         Some(item) => Ok(item),
-        None => {
-            // Every non-excluded row exhausted (or bank empty) -> either
-            // recycle the oldest-excluded ids or generate procedurally.
-            // Procedural generation is the simpler guarantee, so we lean
-            // on it here: endless mode literally cannot run dry.
-            Ok(generate_procedural(category, language, difficulty))
-        }
+        None => Ok(generate_procedural(category, language, difficulty)),
     }
 }
 
-/// Fallback generator: builds a chunk of text from small word/token pools
-/// so the app can produce plausible practice text even with an empty or
-/// exhausted database. Not meant to rival curated content -- just a safety
-/// net so "ran out of text" is structurally impossible.
 fn generate_procedural(category: &str, language: Option<&str>, difficulty: &str) -> TextItem {
     let mut rng = rand::thread_rng();
 
@@ -164,7 +164,7 @@ fn generate_procedural(category: &str, language: Option<&str>, difficulty: &str)
     };
 
     TextItem {
-        id: -1, // negative id marks "procedurally generated, not a DB row"
+        id: -1,
         category: category.to_string(),
         language: language.map(|s| s.to_string()),
         difficulty: difficulty.to_string(),
@@ -211,12 +211,43 @@ const CODE_SNIPPETS_PY: [&str; 6] = [
     "try:\n    process(data)\nexcept ValueError as e:\n    log(e)",
 ];
 
+const CODE_SNIPPETS_CPP: [&str; 4] = [
+    "auto total = std::accumulate(items.begin(), items.end(), 0);",
+    "if (ptr != nullptr) { process(*ptr); }",
+    "std::vector<int> values = {1, 2, 3, 4};",
+    "for (const auto& item : items) { handle(item); }",
+];
+
+const CODE_SNIPPETS_RUST: [&str; 4] = [
+    "let total: i32 = items.iter().sum();",
+    "if let Some(user) = find_user(id) { greet(&user); }",
+    "let values = vec![1, 2, 3, 4];",
+    "match result { Ok(v) => use_value(v), Err(e) => log(e) }",
+];
+
+const CODE_SNIPPETS_PHP: [&str; 4] = [
+    "$total = array_sum(array_column($items, 'value'));",
+    "if ($user !== null) { grantAccess($user['id']); }",
+    "$values = array_map(fn($n) => $n * 2, $numbers);",
+    "try { process($data); } catch (Throwable $e) { log($e); }",
+];
+
+const CODE_SNIPPETS_KOTLIN: [&str; 4] = [
+    "val total = items.sumOf { it.value }",
+    "user?.let { grantAccess(it.id) }",
+    "val values = numbers.map { it * 2 }",
+    "runCatching { process(data) }.onFailure { log(it) }",
+];
+
 fn generate_procedural_code(language: &str, word_count: usize, rng: &mut impl Rng) -> String {
     let pool: &[&str] = match language {
         "python" => &CODE_SNIPPETS_PY,
+        "cpp" => &CODE_SNIPPETS_CPP,
+        "rust" => &CODE_SNIPPETS_RUST,
+        "php" => &CODE_SNIPPETS_PHP,
+        "kotlin" => &CODE_SNIPPETS_KOTLIN,
         _ => &CODE_SNIPPETS_JS,
     };
-    // Roughly scale number of snippets to requested "word_count" difficulty knob.
     let snippet_count = (word_count / 15).max(2);
     let mut lines = Vec::with_capacity(snippet_count);
     for _ in 0..snippet_count {

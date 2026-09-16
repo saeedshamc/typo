@@ -1,0 +1,38 @@
+[
+  {
+    "category": "code",
+    "language": "cpp",
+    "difficulty": "beginner",
+    "body": "#include <iostream>\n\nint add(int a, int b) {\n  return a + b;\n}\n\nint main() {\n  std::cout << add(2, 3) << std::endl;\n  return 0;\n}"
+  },
+  {
+    "category": "code",
+    "language": "cpp",
+    "difficulty": "beginner",
+    "body": "#include <vector>\n#include <iostream>\n\nint main() {\n  std::vector<int> nums = {1, 2, 3};\n  for (int n : nums) std::cout << n << ' ';\n}"
+  },
+  {
+    "category": "code",
+    "language": "cpp",
+    "difficulty": "intermediate",
+    "body": "#include <string>\n#include <optional>\n\nstd::optional<std::string> find_user(int id) {\n  if (id <= 0) return std::nullopt;\n  return std::string(\"user-\") + std::to_string(id);\n}"
+  },
+  {
+    "category": "code",
+    "language": "cpp",
+    "difficulty": "intermediate",
+    "body": "template <typename T>\nclass Stack {\n public:\n  void push(const T& value) { data_.push_back(value); }\n  T pop() {\n    T value = data_.back();\n    data_.pop_back();\n    return value;\n  }\n private:\n  std::vector<T> data_;\n};"
+  },
+  {
+    "category": "code",
+    "language": "cpp",
+    "difficulty": "advanced",
+    "body": "template <typename Iter, typename Pred>\nauto partition_copy_if(Iter first, Iter last, Pred pred) {\n  using T = typename std::iterator_traits<Iter>::value_type;\n  std::vector<T> matched, rest;\n  for (; first != last; ++first) {\n    (pred(*first) ? matched : rest).push_back(*first);\n  }\n  return std::pair{std::move(matched), std::move(rest)};\n}"
+  },
+  {
+    "category": "code",
+    "language": "cpp",
+    "difficulty": "advanced",
+    "body": "class ScopeGuard {\n public:\n  explicit ScopeGuard(std::function<void()> fn) : fn_(std::move(fn)) {}\n  ~ScopeGuard() { if (fn_) fn_(); }\n  ScopeGuard(const ScopeGuard&) = delete;\n  ScopeGuard& operator=(const ScopeGuard&) = delete;\n private:\n  std::function<void()> fn_;\n};"
+  }
+]

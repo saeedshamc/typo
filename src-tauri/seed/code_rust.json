@@ -1,0 +1,38 @@
+[
+  {
+    "category": "code",
+    "language": "rust",
+    "difficulty": "beginner",
+    "body": "fn add(a: i32, b: i32) -> i32 {\n    a + b\n}\n\nfn main() {\n    println!(\"{}\", add(2, 3));\n}"
+  },
+  {
+    "category": "code",
+    "language": "rust",
+    "difficulty": "beginner",
+    "body": "fn main() {\n    let nums = vec![1, 2, 3, 4];\n    let doubled: Vec<_> = nums.iter().map(|n| n * 2).collect();\n    println!(\"{:?}\", doubled);\n}"
+  },
+  {
+    "category": "code",
+    "language": "rust",
+    "difficulty": "intermediate",
+    "body": "fn find_user(id: i64) -> Option<String> {\n    if id <= 0 {\n        None\n    } else {\n        Some(format!(\"user-{id}\"))\n    }\n}"
+  },
+  {
+    "category": "code",
+    "language": "rust",
+    "difficulty": "intermediate",
+    "body": "struct Stack<T> {\n    items: Vec<T>,\n}\n\nimpl<T> Stack<T> {\n    fn new() -> Self { Self { items: Vec::new() } }\n    fn push(&mut self, value: T) { self.items.push(value); }\n    fn pop(&mut self) -> Option<T> { self.items.pop() }\n}"
+  },
+  {
+    "category": "code",
+    "language": "rust",
+    "difficulty": "advanced",
+    "body": "use std::collections::HashMap;\n\nfn group_by<T, K, F>(items: Vec<T>, key_fn: F) -> HashMap<K, Vec<T>>\nwhere\n    K: Eq + std::hash::Hash,\n    F: Fn(&T) -> K,\n{\n    let mut map = HashMap::new();\n    for item in items {\n        map.entry(key_fn(&item)).or_default().push(item);\n    }\n    map\n}"
+  },
+  {
+    "category": "code",
+    "language": "rust",
+    "difficulty": "advanced",
+    "body": "async fn fetch_json(url: &str) -> Result<serde_json::Value, reqwest::Error> {\n    let response = reqwest::get(url).await?.error_for_status()?;\n    response.json().await\n}"
+  }
+]

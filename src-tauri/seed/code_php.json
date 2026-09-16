@@ -1,0 +1,38 @@
+[
+  {
+    "category": "code",
+    "language": "php",
+    "difficulty": "beginner",
+    "body": "<?php\nfunction add(int $a, int $b): int {\n    return $a + $b;\n}\n\necho add(2, 3);"
+  },
+  {
+    "category": "code",
+    "language": "php",
+    "difficulty": "beginner",
+    "body": "<?php\n$numbers = [1, 2, 3, 4, 5];\n$doubled = array_map(fn($n) => $n * 2, $numbers);\nprint_r($doubled);"
+  },
+  {
+    "category": "code",
+    "language": "php",
+    "difficulty": "intermediate",
+    "body": "<?php\nfunction findUser(int $id): ?array {\n    if ($id <= 0) {\n        return null;\n    }\n    return ['id' => $id, 'name' => \"user-$id\"];\n}"
+  },
+  {
+    "category": "code",
+    "language": "php",
+    "difficulty": "intermediate",
+    "body": "<?php\nclass Stack {\n    private array $items = [];\n\n    public function push(mixed $value): void {\n        $this->items[] = $value;\n    }\n\n    public function pop(): mixed {\n        return array_pop($this->items);\n    }\n}"
+  },
+  {
+    "category": "code",
+    "language": "php",
+    "difficulty": "advanced",
+    "body": "<?php\nfunction groupBy(array $items, callable $keyFn): array {\n    $grouped = [];\n    foreach ($items as $item) {\n        $key = $keyFn($item);\n        $grouped[$key][] = $item;\n    }\n    return $grouped;\n}"
+  },
+  {
+    "category": "code",
+    "language": "php",
+    "difficulty": "advanced",
+    "body": "<?php\nfinal class Result {\n    public function __construct(\n        public readonly mixed $value,\n        public readonly ?string $error = null,\n    ) {}\n\n    public function isOk(): bool {\n        return $this->error === null;\n    }\n}"
+  }
+]
