@@ -1,0 +1,56 @@
+[
+  {
+    "category": "code",
+    "language": "typescript",
+    "difficulty": "beginner",
+    "body": "function add(a: number, b: number): number {\n  return a + b;\n}\n\nconsole.log(add(2, 3));"
+  },
+  {
+    "category": "code",
+    "language": "typescript",
+    "difficulty": "beginner",
+    "body": "type User = { id: number; name: string };\nconst user: User = { id: 1, name: 'Ada' };\nconsole.log(user.name);"
+  },
+  {
+    "category": "code",
+    "language": "typescript",
+    "difficulty": "beginner",
+    "body": "const values: number[] = [1, 2, 3];\nconst total = values.reduce((sum, n) => sum + n, 0);"
+  },
+  {
+    "category": "code",
+    "language": "typescript",
+    "difficulty": "intermediate",
+    "body": "interface Repo<T> {\n  findById(id: string): Promise<T | null>;\n  save(entity: T): Promise<void>;\n}\n\nasync function loadUser(repo: Repo<User>, id: string) {\n  const user = await repo.findById(id);\n  if (!user) throw new Error('missing user');\n  return user;\n}"
+  },
+  {
+    "category": "code",
+    "language": "typescript",
+    "difficulty": "intermediate",
+    "body": "type Result<T> =\n  | { ok: true; value: T }\n  | { ok: false; error: string };\n\nfunction ok<T>(value: T): Result<T> {\n  return { ok: true, value };\n}"
+  },
+  {
+    "category": "code",
+    "language": "typescript",
+    "difficulty": "intermediate",
+    "body": "export function assertNever(x: never): never {\n  throw new Error(`unexpected value: ${JSON.stringify(x)}`);\n}"
+  },
+  {
+    "category": "code",
+    "language": "typescript",
+    "difficulty": "advanced",
+    "body": "type DeepReadonly<T> = {\n  readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K];\n};\n\nfunction freezeConfig<T extends object>(config: T): DeepReadonly<T> {\n  return Object.freeze(config) as DeepReadonly<T>;\n}"
+  },
+  {
+    "category": "code",
+    "language": "typescript",
+    "difficulty": "advanced",
+    "body": "async function retry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {\n  let lastError: unknown;\n  for (let i = 0; i < attempts; i++) {\n    try {\n      return await fn();\n    } catch (err) {\n      lastError = err;\n    }\n  }\n  throw lastError;\n}"
+  },
+  {
+    "category": "code",
+    "language": "typescript",
+    "difficulty": "advanced",
+    "body": "export class EventBus<Events extends Record<string, unknown>> {\n  private listeners = new Map<keyof Events, Set<Function>>();\n  on<K extends keyof Events>(event: K, cb: (payload: Events[K]) => void) {\n    const set = this.listeners.get(event) ?? new Set();\n    set.add(cb);\n    this.listeners.set(event, set);\n  }\n}"
+  }
+]

@@ -14,6 +14,12 @@
   {
     "category": "code",
     "language": "cpp",
+    "difficulty": "beginner",
+    "body": "#include <string>\n#include <iostream>\n\nint main() {\n  std::string name = \"Ada\";\n  std::cout << \"hello \" << name << '\\n';\n}"
+  },
+  {
+    "category": "code",
+    "language": "cpp",
     "difficulty": "intermediate",
     "body": "#include <string>\n#include <optional>\n\nstd::optional<std::string> find_user(int id) {\n  if (id <= 0) return std::nullopt;\n  return std::string(\"user-\") + std::to_string(id);\n}"
   },
@@ -26,6 +32,12 @@
   {
     "category": "code",
     "language": "cpp",
+    "difficulty": "intermediate",
+    "body": "#include <algorithm>\n#include <vector>\n\nint main() {\n  std::vector<int> values = {4, 1, 3, 2};\n  std::sort(values.begin(), values.end());\n}"
+  },
+  {
+    "category": "code",
+    "language": "cpp",
     "difficulty": "advanced",
     "body": "template <typename Iter, typename Pred>\nauto partition_copy_if(Iter first, Iter last, Pred pred) {\n  using T = typename std::iterator_traits<Iter>::value_type;\n  std::vector<T> matched, rest;\n  for (; first != last; ++first) {\n    (pred(*first) ? matched : rest).push_back(*first);\n  }\n  return std::pair{std::move(matched), std::move(rest)};\n}"
   },
@@ -34,5 +46,11 @@
     "language": "cpp",
     "difficulty": "advanced",
     "body": "class ScopeGuard {\n public:\n  explicit ScopeGuard(std::function<void()> fn) : fn_(std::move(fn)) {}\n  ~ScopeGuard() { if (fn_) fn_(); }\n  ScopeGuard(const ScopeGuard&) = delete;\n  ScopeGuard& operator=(const ScopeGuard&) = delete;\n private:\n  std::function<void()> fn_;\n};"
+  },
+  {
+    "category": "code",
+    "language": "cpp",
+    "difficulty": "advanced",
+    "body": "template <typename T>\nconcept Addable = requires(T a, T b) {\n  { a + b } -> std::convertible_to<T>;\n};\n\ntemplate <Addable T>\nT sum(T a, T b) { return a + b; }"
   }
 ]

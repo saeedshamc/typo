@@ -20,6 +20,12 @@
   {
     "category": "code",
     "language": "python",
+    "difficulty": "beginner",
+    "body": "for i in range(5):\n    print(i)"
+  },
+  {
+    "category": "code",
+    "language": "python",
     "difficulty": "intermediate",
     "body": "class Stack:\n    def __init__(self):\n        self._items = []\n\n    def push(self, item):\n        self._items.append(item)\n\n    def pop(self):\n        return self._items.pop() if self._items else None"
   },
@@ -38,6 +44,12 @@
   {
     "category": "code",
     "language": "python",
+    "difficulty": "intermediate",
+    "body": "def retry(fn, attempts=3):\n    last = None\n    for _ in range(attempts):\n        try:\n            return fn()\n        except Exception as exc:\n            last = exc\n    raise last"
+  },
+  {
+    "category": "code",
+    "language": "python",
     "difficulty": "advanced",
     "body": "from functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib(n):\n    return n if n < 2 else fib(n - 1) + fib(n - 2)"
   },
@@ -46,5 +58,11 @@
     "language": "python",
     "difficulty": "advanced",
     "body": "async def gather_results(coros):\n    try:\n        return await asyncio.gather(*coros, return_exceptions=True)\n    except Exception as exc:\n        logger.error('gather failed: %s', exc)\n        raise"
+  },
+  {
+    "category": "code",
+    "language": "python",
+    "difficulty": "advanced",
+    "body": "class CachedProperty:\n    def __init__(self, func):\n        self.func = func\n        self.name = func.__name__\n\n    def __get__(self, obj, owner=None):\n        if obj is None:\n            return self\n        value = self.func(obj)\n        setattr(obj, self.name, value)\n        return value"
   }
 ]

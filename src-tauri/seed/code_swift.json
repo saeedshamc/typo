@@ -1,0 +1,56 @@
+[
+  {
+    "category": "code",
+    "language": "swift",
+    "difficulty": "beginner",
+    "body": "func add(_ a: Int, _ b: Int) -> Int {\n  a + b\n}\n\nprint(add(2, 3))"
+  },
+  {
+    "category": "code",
+    "language": "swift",
+    "difficulty": "beginner",
+    "body": "let numbers = [1, 2, 3, 4, 5]\nlet doubled = numbers.map { $0 * 2 }\nprint(doubled)"
+  },
+  {
+    "category": "code",
+    "language": "swift",
+    "difficulty": "beginner",
+    "body": "let name = \"Ada\"\nif !name.isEmpty {\n  print(\"hello \\(name)\")\n}"
+  },
+  {
+    "category": "code",
+    "language": "swift",
+    "difficulty": "intermediate",
+    "body": "func findUser(id: Int64) -> String? {\n  guard id > 0 else { return nil }\n  return \"user-\\(id)\"\n}"
+  },
+  {
+    "category": "code",
+    "language": "swift",
+    "difficulty": "intermediate",
+    "body": "struct Stack<Element> {\n  private var items: [Element] = []\n  mutating func push(_ value: Element) { items.append(value) }\n  mutating func pop() -> Element? { items.popLast() }\n}"
+  },
+  {
+    "category": "code",
+    "language": "swift",
+    "difficulty": "intermediate",
+    "body": "func groupBy<T, K: Hashable>(_ items: [T], key: (T) -> K) -> [K: [T]] {\n  Dictionary(grouping: items, by: key)\n}"
+  },
+  {
+    "category": "code",
+    "language": "swift",
+    "difficulty": "advanced",
+    "body": "enum Result<T> {\n  case ok(T)\n  case err(String)\n}"
+  },
+  {
+    "category": "code",
+    "language": "swift",
+    "difficulty": "advanced",
+    "body": "func retry<T>(attempts: Int = 3, operation: () throws -> T) throws -> T {\n  var lastError: Error?\n  for _ in 0..<attempts {\n    do { return try operation() }\n    catch { lastError = error }\n  }\n  throw lastError!\n}"
+  },
+  {
+    "category": "code",
+    "language": "swift",
+    "difficulty": "advanced",
+    "body": "actor Counter {\n  private var value = 0\n  func increment() -> Int {\n    value += 1\n    return value\n  }\n}"
+  }
+]

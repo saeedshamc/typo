@@ -26,6 +26,18 @@
   {
     "category": "english",
     "language": null,
+    "difficulty": "beginner",
+    "body": "Reading aloud helps you notice rhythm and punctuation. It also trains your eyes to move smoothly across each line."
+  },
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "beginner",
+    "body": "Keep your fingers close to the home row. Looking at the keyboard less often is a skill that grows with patience."
+  },
+  {
+    "category": "english",
+    "language": null,
     "difficulty": "intermediate",
     "body": "Building reliable software requires careful attention to error handling, thorough testing, and clear documentation. Teams that skip these steps often pay for it later in bugs and downtime."
   },
@@ -44,6 +56,18 @@
   {
     "category": "english",
     "language": null,
+    "difficulty": "intermediate",
+    "body": "Code reviews work best when feedback is specific and kind. Point to the risk, suggest an alternative, and leave room for the author to explain intent."
+  },
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "intermediate",
+    "body": "Caching can hide expensive work, but it also hides stale data. Every cache needs an expiration story and a plan for invalidation under load."
+  },
+  {
+    "category": "english",
+    "language": null,
     "difficulty": "advanced",
     "body": "Distributed systems introduce a class of failures that simply do not exist in single-machine programs: partial network partitions, clock skew, and the impossibility of distinguishing a slow node from a dead one."
   },
@@ -58,5 +82,11 @@
     "language": null,
     "difficulty": "advanced",
     "body": "Latency budgets force product teams to confront trade-offs that marketing copy prefers to hide: every animation, analytics call, and speculative prefetch competes for the same scarce milliseconds on a cold cache."
+  },
+  {
+    "category": "english",
+    "language": null,
+    "difficulty": "advanced",
+    "body": "Observability is not a dashboard of vanity metrics. It is the ability to ask new questions of a running system without shipping new instrumentation for every hypothesis."
   }
 ]

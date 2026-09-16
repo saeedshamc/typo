@@ -1,5 +1,18 @@
 export type Category = "persian" | "english" | "code" | "custom";
-export type CodeLanguage = "javascript" | "python" | "cpp" | "rust" | "php" | "kotlin";
+export type CodeLanguage =
+  | "javascript"
+  | "typescript"
+  | "python"
+  | "cpp"
+  | "rust"
+  | "php"
+  | "kotlin"
+  | "go"
+  | "java"
+  | "csharp"
+  | "ruby"
+  | "swift"
+  | "sql";
 export type Difficulty = "beginner" | "intermediate" | "advanced";
 export type SessionMode = "timed" | "endless" | "practice";
 export type CaretStyle = "underline" | "block";
@@ -16,6 +29,22 @@ export const DEFAULT_SETTINGS: AppSettings = {
   soundEnabled: false,
   caseSensitive: true,
   caretStyle: "underline",
+};
+
+export const CODE_LANGUAGE_LABELS: Record<CodeLanguage, string> = {
+  javascript: "JavaScript",
+  typescript: "TypeScript",
+  python: "Python",
+  cpp: "C++",
+  rust: "Rust",
+  php: "PHP",
+  kotlin: "Kotlin",
+  go: "Go",
+  java: "Java",
+  csharp: "C#",
+  ruby: "Ruby",
+  swift: "Swift",
+  sql: "SQL",
 };
 
 export interface TextItem {

@@ -1,5 +1,6 @@
 import { useTypingStore } from "../store/useTypingStore";
 import type { Category, CodeLanguage, Difficulty, SessionMode } from "../types";
+import { CODE_LANGUAGE_LABELS } from "../types";
 
 const CATEGORIES: { value: Category; label: string }[] = [
   { value: "persian", label: "متن فارسی" },
@@ -8,14 +9,10 @@ const CATEGORIES: { value: Category; label: string }[] = [
   { value: "custom", label: "متن من" },
 ];
 
-const CODE_LANGUAGES: { value: CodeLanguage; label: string }[] = [
-  { value: "javascript", label: "JavaScript" },
-  { value: "python", label: "Python" },
-  { value: "cpp", label: "C++" },
-  { value: "rust", label: "Rust" },
-  { value: "php", label: "PHP" },
-  { value: "kotlin", label: "Kotlin" },
-];
+const CODE_LANGUAGES = (Object.keys(CODE_LANGUAGE_LABELS) as CodeLanguage[]).map((value) => ({
+  value,
+  label: CODE_LANGUAGE_LABELS[value],
+}));
 
 const DIFFICULTIES: { value: Difficulty; label: string }[] = [
   { value: "beginner", label: "مبتدی" },

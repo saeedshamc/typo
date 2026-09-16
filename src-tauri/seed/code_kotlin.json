@@ -14,6 +14,12 @@
   {
     "category": "code",
     "language": "kotlin",
+    "difficulty": "beginner",
+    "body": "fun main() {\n    val name = \"Ada\"\n    if (name.isNotEmpty()) {\n        println(\"hello $name\")\n    }\n}"
+  },
+  {
+    "category": "code",
+    "language": "kotlin",
     "difficulty": "intermediate",
     "body": "fun findUser(id: Long): Map<String, Any>? {\n    if (id <= 0) return null\n    return mapOf(\"id\" to id, \"name\" to \"user-$id\")\n}"
   },
@@ -26,13 +32,25 @@
   {
     "category": "code",
     "language": "kotlin",
-    "difficulty": "advanced",
+    "difficulty": "intermediate",
     "body": "fun <T, K> List<T>.groupByKey(keyFn: (T) -> K): Map<K, List<T>> {\n    val grouped = linkedMapOf<K, MutableList<T>>()\n    for (item in this) {\n        grouped.getOrPut(keyFn(item)) { mutableListOf() }.add(item)\n    }\n    return grouped\n}"
   },
   {
     "category": "code",
     "language": "kotlin",
     "difficulty": "advanced",
+    "body": "sealed interface Result<out T> {\n    data class Ok<T>(val value: T) : Result<T>\n    data class Err(val message: String) : Result<Nothing>\n}"
+  },
+  {
+    "category": "code",
+    "language": "kotlin",
+    "difficulty": "advanced",
     "body": "suspend fun fetchJson(url: String): String {\n    return httpClient.get(url).bodyAsText()\n}"
+  },
+  {
+    "category": "code",
+    "language": "kotlin",
+    "difficulty": "advanced",
+    "body": "inline fun <T> retry(attempts: Int = 3, block: () -> T): T {\n    var last: Throwable? = null\n    repeat(attempts) {\n        try {\n            return block()\n        } catch (t: Throwable) {\n            last = t\n        }\n    }\n    throw last!!\n}"
   }
 ]

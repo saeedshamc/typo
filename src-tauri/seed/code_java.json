@@ -1,0 +1,56 @@
+[
+  {
+    "category": "code",
+    "language": "java",
+    "difficulty": "beginner",
+    "body": "public class Main {\n  static int add(int a, int b) {\n    return a + b;\n  }\n\n  public static void main(String[] args) {\n    System.out.println(add(2, 3));\n  }\n}"
+  },
+  {
+    "category": "code",
+    "language": "java",
+    "difficulty": "beginner",
+    "body": "import java.util.List;\n\npublic class Main {\n  public static void main(String[] args) {\n    var nums = List.of(1, 2, 3, 4);\n    nums.stream().map(n -> n * 2).forEach(System.out::println);\n  }\n}"
+  },
+  {
+    "category": "code",
+    "language": "java",
+    "difficulty": "beginner",
+    "body": "public class Greeter {\n  public static void main(String[] args) {\n    String name = \"Ada\";\n    System.out.println(\"hello \" + name);\n  }\n}"
+  },
+  {
+    "category": "code",
+    "language": "java",
+    "difficulty": "intermediate",
+    "body": "import java.util.Optional;\n\npublic class Users {\n  static Optional<String> findUser(long id) {\n    if (id <= 0) return Optional.empty();\n    return Optional.of(\"user-\" + id);\n  }\n}"
+  },
+  {
+    "category": "code",
+    "language": "java",
+    "difficulty": "intermediate",
+    "body": "import java.util.ArrayDeque;\n\npublic class Stack<T> {\n  private final ArrayDeque<T> items = new ArrayDeque<>();\n  public void push(T value) { items.push(value); }\n  public T pop() { return items.poll(); }\n}"
+  },
+  {
+    "category": "code",
+    "language": "java",
+    "difficulty": "intermediate",
+    "body": "import java.util.*;\nimport java.util.function.Function;\nimport java.util.stream.Collectors;\n\npublic class Grouping {\n  static <T, K> Map<K, List<T>> groupBy(List<T> items, Function<T, K> keyFn) {\n    return items.stream().collect(Collectors.groupingBy(keyFn));\n  }\n}"
+  },
+  {
+    "category": "code",
+    "language": "java",
+    "difficulty": "advanced",
+    "body": "public sealed interface Result<T> permits Result.Ok, Result.Err {\n  record Ok<T>(T value) implements Result<T> {}\n  record Err<T>(String message) implements Result<T> {}\n}"
+  },
+  {
+    "category": "code",
+    "language": "java",
+    "difficulty": "advanced",
+    "body": "public final class Retry {\n  public static <T> T run(int attempts, Callable<T> fn) throws Exception {\n    Exception last = null;\n    for (int i = 0; i < attempts; i++) {\n      try {\n        return fn.call();\n      } catch (Exception ex) {\n        last = ex;\n      }\n    }\n    throw last;\n  }\n}"
+  },
+  {
+    "category": "code",
+    "language": "java",
+    "difficulty": "advanced",
+    "body": "public record Page<T>(List<T> items, boolean hasNext) {\n  public static <T> Page<T> empty() {\n    return new Page<>(List.of(), false);\n  }\n}"
+  }
+]

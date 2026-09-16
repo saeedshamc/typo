@@ -14,6 +14,12 @@
   {
     "category": "code",
     "language": "rust",
+    "difficulty": "beginner",
+    "body": "fn main() {\n    let name = \"Ada\";\n    println!(\"hello {name}\");\n}"
+  },
+  {
+    "category": "code",
+    "language": "rust",
     "difficulty": "intermediate",
     "body": "fn find_user(id: i64) -> Option<String> {\n    if id <= 0 {\n        None\n    } else {\n        Some(format!(\"user-{id}\"))\n    }\n}"
   },
@@ -26,6 +32,12 @@
   {
     "category": "code",
     "language": "rust",
+    "difficulty": "intermediate",
+    "body": "fn average(values: &[f64]) -> Option<f64> {\n    if values.is_empty() {\n        None\n    } else {\n        Some(values.iter().sum::<f64>() / values.len() as f64)\n    }\n}"
+  },
+  {
+    "category": "code",
+    "language": "rust",
     "difficulty": "advanced",
     "body": "use std::collections::HashMap;\n\nfn group_by<T, K, F>(items: Vec<T>, key_fn: F) -> HashMap<K, Vec<T>>\nwhere\n    K: Eq + std::hash::Hash,\n    F: Fn(&T) -> K,\n{\n    let mut map = HashMap::new();\n    for item in items {\n        map.entry(key_fn(&item)).or_default().push(item);\n    }\n    map\n}"
   },
@@ -34,5 +46,11 @@
     "language": "rust",
     "difficulty": "advanced",
     "body": "async fn fetch_json(url: &str) -> Result<serde_json::Value, reqwest::Error> {\n    let response = reqwest::get(url).await?.error_for_status()?;\n    response.json().await\n}"
+  },
+  {
+    "category": "code",
+    "language": "rust",
+    "difficulty": "advanced",
+    "body": "pub enum RetryError {\n    Exhausted,\n    Fatal(String),\n}\n\npub fn retry<T, E, F>(mut attempts: u32, mut f: F) -> Result<T, RetryError>\nwhere\n    F: FnMut() -> Result<T, E>,\n{\n    while attempts > 0 {\n        match f() {\n            Ok(value) => return Ok(value),\n            Err(_) if attempts > 1 => attempts -= 1,\n            Err(_) => return Err(RetryError::Exhausted),\n        }\n    }\n    Err(RetryError::Exhausted)\n}"
   }
 ]

@@ -26,11 +26,18 @@ struct SeedItem {
 const SEED_PERSIAN: &str = include_str!("../seed/persian.json");
 const SEED_ENGLISH: &str = include_str!("../seed/english.json");
 const SEED_CODE_JS: &str = include_str!("../seed/code_javascript.json");
+const SEED_CODE_TS: &str = include_str!("../seed/code_typescript.json");
 const SEED_CODE_PY: &str = include_str!("../seed/code_python.json");
 const SEED_CODE_CPP: &str = include_str!("../seed/code_cpp.json");
 const SEED_CODE_RUST: &str = include_str!("../seed/code_rust.json");
 const SEED_CODE_PHP: &str = include_str!("../seed/code_php.json");
 const SEED_CODE_KOTLIN: &str = include_str!("../seed/code_kotlin.json");
+const SEED_CODE_GO: &str = include_str!("../seed/code_go.json");
+const SEED_CODE_JAVA: &str = include_str!("../seed/code_java.json");
+const SEED_CODE_CS: &str = include_str!("../seed/code_csharp.json");
+const SEED_CODE_RUBY: &str = include_str!("../seed/code_ruby.json");
+const SEED_CODE_SWIFT: &str = include_str!("../seed/code_swift.json");
+const SEED_CODE_SQL: &str = include_str!("../seed/code_sql.json");
 
 /// Rough symbol-density score used for auto-leveling: fraction of
 /// non-alphanumeric, non-whitespace characters. Code with lots of
@@ -52,11 +59,18 @@ pub fn seed_if_empty(conn: &Connection) -> rusqlite::Result<()> {
         SEED_PERSIAN,
         SEED_ENGLISH,
         SEED_CODE_JS,
+        SEED_CODE_TS,
         SEED_CODE_PY,
         SEED_CODE_CPP,
         SEED_CODE_RUST,
         SEED_CODE_PHP,
         SEED_CODE_KOTLIN,
+        SEED_CODE_GO,
+        SEED_CODE_JAVA,
+        SEED_CODE_CS,
+        SEED_CODE_RUBY,
+        SEED_CODE_SWIFT,
+        SEED_CODE_SQL,
     ];
     let tx = conn.unchecked_transaction()?;
     for raw in all_seed {
@@ -251,13 +265,69 @@ const CODE_SNIPPETS_KOTLIN: [&str; 4] = [
     "runCatching { process(data) }.onFailure { log(it) }",
 ];
 
+const CODE_SNIPPETS_TS: [&str; 4] = [
+    "type User = { id: number; name: string };",
+    "const total: number = values.reduce((sum, n) => sum + n, 0);",
+    "async function load(): Promise<void> { await fetch(url); }",
+    "export function assertNever(x: never): never { throw new Error('unexpected'); }",
+];
+
+const CODE_SNIPPETS_GO: [&str; 4] = [
+    "func add(a, b int) int { return a + b }",
+    "for _, item := range items { handle(item) }",
+    "if err != nil { return err }",
+    "go worker(ctx, jobs, results)",
+];
+
+const CODE_SNIPPETS_JAVA: [&str; 4] = [
+    "var total = items.stream().mapToInt(Item::value).sum();",
+    "Optional.ofNullable(user).ifPresent(this::greet);",
+    "record Point(int x, int y) {}",
+    "List.of(1, 2, 3).forEach(System.out::println);",
+];
+
+const CODE_SNIPPETS_CS: [&str; 4] = [
+    "var total = items.Sum(x => x.Value);",
+    "if (user is not null) GrantAccess(user.Id);",
+    "public record Page<T>(IReadOnlyList<T> Items, bool HasNext);",
+    "await foreach (var item in source) { Process(item); }",
+];
+
+const CODE_SNIPPETS_RUBY: [&str; 4] = [
+    "total = items.sum(&:value)",
+    "users.select(&:active?).each { |u| greet(u) }",
+    "result = data.transform_values(&:upcase)",
+    "raise ArgumentError, 'blank' if value.nil? || value.empty?",
+];
+
+const CODE_SNIPPETS_SWIFT: [&str; 4] = [
+    "let total = items.reduce(0) { $0 + $1.value }",
+    "guard let user else { return }",
+    "Task { await refresh() }",
+    "enum State { case idle, loading, ready }",
+];
+
+const CODE_SNIPPETS_SQL: [&str; 4] = [
+    "SELECT id, name FROM users WHERE active = 1;",
+    "UPDATE sessions SET wpm = 80 WHERE id = 12;",
+    "CREATE INDEX idx_users_email ON users(email);",
+    "WITH ranked AS (SELECT * FROM sessions) SELECT * FROM ranked;",
+];
+
 fn generate_procedural_code(language: &str, word_count: usize, rng: &mut impl Rng) -> String {
     let pool: &[&str] = match language {
         "python" => &CODE_SNIPPETS_PY,
+        "typescript" => &CODE_SNIPPETS_TS,
         "cpp" => &CODE_SNIPPETS_CPP,
         "rust" => &CODE_SNIPPETS_RUST,
         "php" => &CODE_SNIPPETS_PHP,
         "kotlin" => &CODE_SNIPPETS_KOTLIN,
+        "go" => &CODE_SNIPPETS_GO,
+        "java" => &CODE_SNIPPETS_JAVA,
+        "csharp" => &CODE_SNIPPETS_CS,
+        "ruby" => &CODE_SNIPPETS_RUBY,
+        "swift" => &CODE_SNIPPETS_SWIFT,
+        "sql" => &CODE_SNIPPETS_SQL,
         _ => &CODE_SNIPPETS_JS,
     };
     let snippet_count = (word_count / 15).max(2);

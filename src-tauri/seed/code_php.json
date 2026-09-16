@@ -14,6 +14,12 @@
   {
     "category": "code",
     "language": "php",
+    "difficulty": "beginner",
+    "body": "<?php\n$name = 'Ada';\nif ($name) {\n    echo \"hello $name\";\n}"
+  },
+  {
+    "category": "code",
+    "language": "php",
     "difficulty": "intermediate",
     "body": "<?php\nfunction findUser(int $id): ?array {\n    if ($id <= 0) {\n        return null;\n    }\n    return ['id' => $id, 'name' => \"user-$id\"];\n}"
   },
@@ -26,7 +32,7 @@
   {
     "category": "code",
     "language": "php",
-    "difficulty": "advanced",
+    "difficulty": "intermediate",
     "body": "<?php\nfunction groupBy(array $items, callable $keyFn): array {\n    $grouped = [];\n    foreach ($items as $item) {\n        $key = $keyFn($item);\n        $grouped[$key][] = $item;\n    }\n    return $grouped;\n}"
   },
   {
@@ -34,5 +40,17 @@
     "language": "php",
     "difficulty": "advanced",
     "body": "<?php\nfinal class Result {\n    public function __construct(\n        public readonly mixed $value,\n        public readonly ?string $error = null,\n    ) {}\n\n    public function isOk(): bool {\n        return $this->error === null;\n    }\n}"
+  },
+  {
+    "category": "code",
+    "language": "php",
+    "difficulty": "advanced",
+    "body": "<?php\nfunction retry(callable $fn, int $attempts = 3): mixed {\n    $last = null;\n    for ($i = 0; $i < $attempts; $i++) {\n        try {\n            return $fn();\n        } catch (Throwable $e) {\n            $last = $e;\n        }\n    }\n    throw $last;\n}"
+  },
+  {
+    "category": "code",
+    "language": "php",
+    "difficulty": "advanced",
+    "body": "<?php\ninterface Repository {\n    public function find(string $id): ?object;\n    public function save(object $entity): void;\n}"
   }
 ]

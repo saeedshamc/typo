@@ -1,0 +1,56 @@
+[
+  {
+    "category": "code",
+    "language": "go",
+    "difficulty": "beginner",
+    "body": "package main\n\nimport \"fmt\"\n\nfunc add(a, b int) int {\n\treturn a + b\n}\n\nfunc main() {\n\tfmt.Println(add(2, 3))\n}"
+  },
+  {
+    "category": "code",
+    "language": "go",
+    "difficulty": "beginner",
+    "body": "package main\n\nfunc main() {\n\tnums := []int{1, 2, 3, 4}\n\tfor _, n := range nums {\n\t\tprintln(n * 2)\n\t}\n}"
+  },
+  {
+    "category": "code",
+    "language": "go",
+    "difficulty": "beginner",
+    "body": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tname := \"Ada\"\n\tfmt.Printf(\"hello %s\\n\", name)\n}"
+  },
+  {
+    "category": "code",
+    "language": "go",
+    "difficulty": "intermediate",
+    "body": "package main\n\nfunc findUser(id int64) (string, bool) {\n\tif id <= 0 {\n\t\treturn \"\", false\n\t}\n\treturn fmt.Sprintf(\"user-%d\", id), true\n}"
+  },
+  {
+    "category": "code",
+    "language": "go",
+    "difficulty": "intermediate",
+    "body": "type Stack[T any] struct {\n\titems []T\n}\n\nfunc (s *Stack[T]) Push(v T) {\n\ts.items = append(s.items, v)\n}\n\nfunc (s *Stack[T]) Pop() (T, bool) {\n\tif len(s.items) == 0 {\n\t\tvar zero T\n\t\treturn zero, false\n\t}\n\tv := s.items[len(s.items)-1]\n\ts.items = s.items[:len(s.items)-1]\n\treturn v, true\n}"
+  },
+  {
+    "category": "code",
+    "language": "go",
+    "difficulty": "intermediate",
+    "body": "func groupBy[T any, K comparable](items []T, keyFn func(T) K) map[K][]T {\n\tout := map[K][]T{}\n\tfor _, item := range items {\n\t\tk := keyFn(item)\n\t\tout[k] = append(out[k], item)\n\t}\n\treturn out\n}"
+  },
+  {
+    "category": "code",
+    "language": "go",
+    "difficulty": "advanced",
+    "body": "func retry[T any](attempts int, fn func() (T, error)) (T, error) {\n\tvar zero T\n\tvar err error\n\tfor i := 0; i < attempts; i++ {\n\t\tvar value T\n\t\tvalue, err = fn()\n\t\tif err == nil {\n\t\t\treturn value, nil\n\t\t}\n\t}\n\treturn zero, err\n}"
+  },
+  {
+    "category": "code",
+    "language": "go",
+    "difficulty": "advanced",
+    "body": "type Result[T any] struct {\n\tValue T\n\tErr   error\n}\n\nfunc (r Result[T]) Unwrap() (T, error) {\n\treturn r.Value, r.Err\n}"
+  },
+  {
+    "category": "code",
+    "language": "go",
+    "difficulty": "advanced",
+    "body": "func worker(ctx context.Context, jobs <-chan int, results chan<- int) {\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn\n\t\tcase job, ok := <-jobs:\n\t\t\tif !ok {\n\t\t\t\treturn\n\t\t\t}\n\t\t\tresults <- job * 2\n\t\t}\n\t}\n}"
+  }
+]

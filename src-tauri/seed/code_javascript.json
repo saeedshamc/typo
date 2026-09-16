@@ -20,6 +20,12 @@
   {
     "category": "code",
     "language": "javascript",
+    "difficulty": "beginner",
+    "body": "for (let i = 0; i < 5; i++) {\n  console.log(i);\n}"
+  },
+  {
+    "category": "code",
+    "language": "javascript",
     "difficulty": "intermediate",
     "body": "async function fetchUser(id) {\n  const res = await fetch(`/api/users/${id}`);\n  if (!res.ok) throw new Error('failed to fetch user');\n  return res.json();\n}"
   },
@@ -38,6 +44,12 @@
   {
     "category": "code",
     "language": "javascript",
+    "difficulty": "intermediate",
+    "body": "function debounce(fn, delay) {\n  let timer = null;\n  return (...args) => {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn(...args), delay);\n  };\n}"
+  },
+  {
+    "category": "code",
+    "language": "javascript",
     "difficulty": "advanced",
     "body": "const memoize = (fn) => {\n  const cache = new Map();\n  return (...args) => {\n    const key = JSON.stringify(args);\n    if (!cache.has(key)) cache.set(key, fn(...args));\n    return cache.get(key);\n  };\n};"
   },
@@ -45,6 +57,12 @@
     "category": "code",
     "language": "javascript",
     "difficulty": "advanced",
-    "body": "export function debounce(fn, delay) {\n  let timer = null;\n  return (...args) => {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), delay);\n  };\n}"
+    "body": "export async function* paginate(fetchPage) {\n  let page = 1;\n  while (true) {\n    const rows = await fetchPage(page);\n    if (!rows.length) return;\n    yield* rows;\n    page += 1;\n  }\n}"
+  },
+  {
+    "category": "code",
+    "language": "javascript",
+    "difficulty": "advanced",
+    "body": "function createStore(reducer, initial) {\n  let state = initial;\n  const listeners = new Set();\n  return {\n    getState: () => state,\n    dispatch: (action) => {\n      state = reducer(state, action);\n      listeners.forEach((l) => l());\n    },\n    subscribe: (listener) => {\n      listeners.add(listener);\n      return () => listeners.delete(listener);\n    },\n  };\n}"
   }
 ]

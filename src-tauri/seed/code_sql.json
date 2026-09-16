@@ -1,0 +1,56 @@
+[
+  {
+    "category": "code",
+    "language": "sql",
+    "difficulty": "beginner",
+    "body": "SELECT id, name\nFROM users\nWHERE active = 1\nORDER BY name;"
+  },
+  {
+    "category": "code",
+    "language": "sql",
+    "difficulty": "beginner",
+    "body": "INSERT INTO users (name, email)\nVALUES ('Ada', 'ada@example.com');"
+  },
+  {
+    "category": "code",
+    "language": "sql",
+    "difficulty": "beginner",
+    "body": "UPDATE users\nSET active = 0\nWHERE last_login < CURRENT_DATE - INTERVAL '90 days';"
+  },
+  {
+    "category": "code",
+    "language": "sql",
+    "difficulty": "intermediate",
+    "body": "SELECT u.name, COUNT(o.id) AS order_count\nFROM users u\nLEFT JOIN orders o ON o.user_id = u.id\nGROUP BY u.name\nHAVING COUNT(o.id) > 3;"
+  },
+  {
+    "category": "code",
+    "language": "sql",
+    "difficulty": "intermediate",
+    "body": "WITH recent AS (\n  SELECT *\n  FROM sessions\n  WHERE created_at >= NOW() - INTERVAL '7 days'\n)\nSELECT user_id, COUNT(*) AS sessions\nFROM recent\nGROUP BY user_id;"
+  },
+  {
+    "category": "code",
+    "language": "sql",
+    "difficulty": "intermediate",
+    "body": "CREATE INDEX idx_orders_user_created\nON orders (user_id, created_at DESC);"
+  },
+  {
+    "category": "code",
+    "language": "sql",
+    "difficulty": "advanced",
+    "body": "SELECT DISTINCT ON (user_id)\n  user_id,\n  created_at,\n  wpm\nFROM sessions\nORDER BY user_id, wpm DESC, created_at DESC;"
+  },
+  {
+    "category": "code",
+    "language": "sql",
+    "difficulty": "advanced",
+    "body": "UPDATE products p\nSET price = p.price * 0.9\nFROM inventory i\nWHERE i.product_id = p.id\n  AND i.quantity > 100\n  AND p.category = 'clearance';"
+  },
+  {
+    "category": "code",
+    "language": "sql",
+    "difficulty": "advanced",
+    "body": "CREATE OR REPLACE FUNCTION touch_updated_at()\nRETURNS trigger AS $$\nBEGIN\n  NEW.updated_at = NOW();\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;"
+  }
+]

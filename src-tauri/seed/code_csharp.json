@@ -1,0 +1,56 @@
+[
+  {
+    "category": "code",
+    "language": "csharp",
+    "difficulty": "beginner",
+    "body": "using System;\n\nstatic int Add(int a, int b) => a + b;\n\nConsole.WriteLine(Add(2, 3));"
+  },
+  {
+    "category": "code",
+    "language": "csharp",
+    "difficulty": "beginner",
+    "body": "var numbers = new[] { 1, 2, 3, 4, 5 };\nvar doubled = numbers.Select(n => n * 2);\nforeach (var n in doubled) Console.WriteLine(n);"
+  },
+  {
+    "category": "code",
+    "language": "csharp",
+    "difficulty": "beginner",
+    "body": "var name = \"Ada\";\nif (!string.IsNullOrEmpty(name))\n{\n    Console.WriteLine($\"hello {name}\");\n}"
+  },
+  {
+    "category": "code",
+    "language": "csharp",
+    "difficulty": "intermediate",
+    "body": "string? FindUser(long id) => id <= 0 ? null : $\"user-{id}\";"
+  },
+  {
+    "category": "code",
+    "language": "csharp",
+    "difficulty": "intermediate",
+    "body": "public class Stack<T>\n{\n    private readonly List<T> _items = new();\n    public void Push(T value) => _items.Add(value);\n    public bool TryPop(out T value)\n    {\n        if (_items.Count == 0)\n        {\n            value = default!;\n            return false;\n        }\n        value = _items[^1];\n        _items.RemoveAt(_items.Count - 1);\n        return true;\n    }\n}"
+  },
+  {
+    "category": "code",
+    "language": "csharp",
+    "difficulty": "intermediate",
+    "body": "public static IDictionary<TKey, List<T>> GroupBy<T, TKey>(\n    IEnumerable<T> items,\n    Func<T, TKey> keyFn) where TKey : notnull\n{\n    return items.GroupBy(keyFn).ToDictionary(g => g.Key, g => g.ToList());\n}"
+  },
+  {
+    "category": "code",
+    "language": "csharp",
+    "difficulty": "advanced",
+    "body": "public abstract record Result<T>\n{\n    public sealed record Ok(T Value) : Result<T>;\n    public sealed record Err(string Message) : Result<T>;\n}"
+  },
+  {
+    "category": "code",
+    "language": "csharp",
+    "difficulty": "advanced",
+    "body": "public static async Task<T> RetryAsync<T>(Func<Task<T>> fn, int attempts = 3)\n{\n    Exception? last = null;\n    for (var i = 0; i < attempts; i++)\n    {\n        try { return await fn(); }\n        catch (Exception ex) { last = ex; }\n    }\n    throw last!;\n}"
+  },
+  {
+    "category": "code",
+    "language": "csharp",
+    "difficulty": "advanced",
+    "body": "public readonly record struct Page<T>(IReadOnlyList<T> Items, bool HasNext)\n{\n    public static Page<T> Empty => new(Array.Empty<T>(), false);\n}"
+  }
+]

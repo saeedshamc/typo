@@ -1,0 +1,56 @@
+[
+  {
+    "category": "code",
+    "language": "ruby",
+    "difficulty": "beginner",
+    "body": "def add(a, b)\n  a + b\nend\n\nputs add(2, 3)"
+  },
+  {
+    "category": "code",
+    "language": "ruby",
+    "difficulty": "beginner",
+    "body": "numbers = [1, 2, 3, 4, 5]\ndoubled = numbers.map { |n| n * 2 }\nputs doubled.inspect"
+  },
+  {
+    "category": "code",
+    "language": "ruby",
+    "difficulty": "beginner",
+    "body": "name = 'Ada'\nputs \"hello #{name}\" if name"
+  },
+  {
+    "category": "code",
+    "language": "ruby",
+    "difficulty": "intermediate",
+    "body": "def find_user(id)\n  return nil if id <= 0\n  \"user-#{id}\"\nend"
+  },
+  {
+    "category": "code",
+    "language": "ruby",
+    "difficulty": "intermediate",
+    "body": "class Stack\n  def initialize\n    @items = []\n  end\n\n  def push(value)\n    @items << value\n  end\n\n  def pop\n    @items.pop\n  end\nend"
+  },
+  {
+    "category": "code",
+    "language": "ruby",
+    "difficulty": "intermediate",
+    "body": "def group_by(items)\n  items.each_with_object(Hash.new { |h, k| h[k] = [] }) do |item, memo|\n    memo[yield(item)] << item\n  end\nend"
+  },
+  {
+    "category": "code",
+    "language": "ruby",
+    "difficulty": "advanced",
+    "body": "def retry_call(attempts: 3)\n  last_error = nil\n  attempts.times do\n    begin\n      return yield\n    rescue StandardError => e\n      last_error = e\n    end\n  end\n  raise last_error\nend"
+  },
+  {
+    "category": "code",
+    "language": "ruby",
+    "difficulty": "advanced",
+    "body": "Result = Struct.new(:ok, :value, :error, keyword_init: true) do\n  def self.ok(value) = new(ok: true, value: value, error: nil)\n  def self.err(error) = new(ok: false, value: nil, error: error)\nend"
+  },
+  {
+    "category": "code",
+    "language": "ruby",
+    "difficulty": "advanced",
+    "body": "module Enumerable\n  def map_compact\n    each_with_object([]) do |item, memo|\n      value = yield(item)\n      memo << value unless value.nil?\n    end\n  end\nend"
+  }
+]
