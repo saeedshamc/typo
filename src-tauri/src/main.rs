@@ -163,6 +163,7 @@ fn set_setting(state: State<AppState>, key: String, value: String) -> Result<(),
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_log::Builder::default().build())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(|app| {
             // DB lives in the OS app-data dir, not inside the install dir
             // (so it survives updates/reinstalls) and not in-memory

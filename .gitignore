@@ -1,0 +1,26 @@
+# Dependencies & build
+node_modules/
+dist/
+src-tauri/target/
+
+# Logs & caches
+*.log
+.npm/
+.cache/
+
+# Env / OS
+.env
+.env.*
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+
+# Test / coverage
+coverage/
+
+# Local tooling
+.git-rewrite-msg.ps1
