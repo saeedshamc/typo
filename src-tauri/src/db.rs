@@ -36,17 +36,51 @@ pub fn open_and_migrate(path: &Path) -> rusqlite::Result<Connection> {
 
         -- One row per in-progress session, overwritten on every autosave tick.
         -- This is what makes crash recovery possible: on relaunch the
-        -- frontend calls load_progress(session_id) before starting fresh.
+        -- frontend loads the latest progress row before starting fresh.
         CREATE TABLE IF NOT EXISTS progress (
             session_id      TEXT PRIMARY KEY,
             remaining_text  TEXT NOT NULL,
             elapsed_ms      INTEGER NOT NULL,
+            category        TEXT NOT NULL DEFAULT 'english',
+            language        TEXT,
+            difficulty      TEXT NOT NULL DEFAULT 'beginner',
+            mode            TEXT NOT NULL DEFAULT 'timed',
+            duration_secs   INTEGER NOT NULL DEFAULT 60,
             updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
         );
         "#,
     )?;
 
+    migrate_progress_columns(&conn)?;
+
     Ok(conn)
+}
+
+fn migrate_progress_columns(conn: &Connection) -> rusqlite::Result<()> {
+    let mut stmt = conn.prepare("PRAGMA table_info(progress)")?;
+    let existing: Vec<String> = stmt
+        .query_map([], |row| row.get::<_, String>(1))?
+        .filter_map(|r| r.ok())
+        .collect();
+
+    let additions = [
+        ("category", "TEXT NOT NULL DEFAULT 'english'"),
+        ("language", "TEXT"),
+        ("difficulty", "TEXT NOT NULL DEFAULT 'beginner'"),
+        ("mode", "TEXT NOT NULL DEFAULT 'timed'"),
+        ("duration_secs", "INTEGER NOT NULL DEFAULT 60"),
+    ];
+
+    for (name, decl) in additions {
+        if !existing.iter().any(|c| c == name) {
+            conn.execute(
+                &format!("ALTER TABLE progress ADD COLUMN {name} {decl}"),
+                [],
+            )?;
+        }
+    }
+
+    Ok(())
 }
 
 pub fn save_progress(
@@ -54,15 +88,37 @@ pub fn save_progress(
     session_id: &str,
     remaining_text: &str,
     elapsed_ms: i64,
+    category: &str,
+    language: Option<&str>,
+    difficulty: &str,
+    mode: &str,
+    duration_secs: i64,
 ) -> Result<(), String> {
     conn.execute(
-        "INSERT INTO progress (session_id, remaining_text, elapsed_ms, updated_at)
-         VALUES (?1, ?2, ?3, datetime('now'))
+        "INSERT INTO progress (
+            session_id, remaining_text, elapsed_ms,
+            category, language, difficulty, mode, duration_secs, updated_at
+         )
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, datetime('now'))
          ON CONFLICT(session_id) DO UPDATE SET
             remaining_text = excluded.remaining_text,
             elapsed_ms     = excluded.elapsed_ms,
+            category       = excluded.category,
+            language       = excluded.language,
+            difficulty     = excluded.difficulty,
+            mode           = excluded.mode,
+            duration_secs  = excluded.duration_secs,
             updated_at     = excluded.updated_at",
-        params![session_id, remaining_text, elapsed_ms],
+        params![
+            session_id,
+            remaining_text,
+            elapsed_ms,
+            category,
+            language,
+            difficulty,
+            mode,
+            duration_secs
+        ],
     )
     .map_err(|e| e.to_string())?;
     Ok(())
@@ -70,25 +126,66 @@ pub fn save_progress(
 
 #[derive(Serialize)]
 pub struct Progress {
+    pub session_id: String,
     pub remaining_text: String,
     pub elapsed_ms: i64,
+    pub category: String,
+    pub language: Option<String>,
+    pub difficulty: String,
+    pub mode: String,
+    pub duration_secs: i64,
     pub updated_at: String,
 }
 
 pub fn load_progress(conn: &Connection, session_id: &str) -> Result<Option<Progress>, String> {
     conn.query_row(
-        "SELECT remaining_text, elapsed_ms, updated_at FROM progress WHERE session_id = ?1",
+        "SELECT session_id, remaining_text, elapsed_ms, category, language,
+                difficulty, mode, duration_secs, updated_at
+         FROM progress WHERE session_id = ?1",
         params![session_id],
-        |row| {
-            Ok(Progress {
-                remaining_text: row.get(0)?,
-                elapsed_ms: row.get(1)?,
-                updated_at: row.get(2)?,
-            })
-        },
+        map_progress_row,
     )
     .optional()
     .map_err(|e| e.to_string())
+}
+
+pub fn load_latest_progress(conn: &Connection) -> Result<Option<Progress>, String> {
+    conn.query_row(
+        "SELECT session_id, remaining_text, elapsed_ms, category, language,
+                difficulty, mode, duration_secs, updated_at
+         FROM progress
+         ORDER BY updated_at DESC
+         LIMIT 1",
+        [],
+        map_progress_row,
+    )
+    .optional()
+    .map_err(|e| e.to_string())
+}
+
+fn map_progress_row(row: &rusqlite::Row<'_>) -> rusqlite::Result<Progress> {
+    Ok(Progress {
+        session_id: row.get(0)?,
+        remaining_text: row.get(1)?,
+        elapsed_ms: row.get(2)?,
+        category: row.get(3)?,
+        language: row.get(4)?,
+        difficulty: row.get(5)?,
+        mode: row.get(6)?,
+        duration_secs: row.get(7)?,
+        updated_at: row.get(8)?,
+    })
+}
+
+pub fn clear_progress(conn: &Connection, session_id: Option<&str>) -> Result<(), String> {
+    if let Some(id) = session_id {
+        conn.execute("DELETE FROM progress WHERE session_id = ?1", params![id])
+            .map_err(|e| e.to_string())?;
+    } else {
+        conn.execute("DELETE FROM progress", [])
+            .map_err(|e| e.to_string())?;
+    }
+    Ok(())
 }
 
 pub fn finish_session(

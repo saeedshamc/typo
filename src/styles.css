@@ -91,6 +91,18 @@ button.active {
   font-size: 0.9rem;
 }
 
+.resume-prompt {
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.resume-prompt p {
+  margin: 0 0 0.75rem;
+}
+
 .typing-area {
   position: relative;
   margin-top: 2rem;

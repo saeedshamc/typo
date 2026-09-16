@@ -12,7 +12,7 @@
 // 3. Autosave / crash recovery.
 //    Progress is written to SQLite every few seconds from the frontend
 //    (see src/store/useTypingStore.ts). If the app is killed, the next
-//    launch can call `load_progress` and resume.
+//    launch can call `load_latest_progress` and resume.
 
 mod content;
 mod db;
@@ -72,10 +72,25 @@ fn save_progress(
     session_id: String,
     remaining_text: String,
     elapsed_ms: i64,
+    category: String,
+    language: Option<String>,
+    difficulty: String,
+    mode: String,
+    duration_secs: i64,
 ) -> Result<(), String> {
     safe_command!({
         let conn = state.conn.lock().map_err(|_| "db lock poisoned".to_string())?;
-        db::save_progress(&conn, &session_id, &remaining_text, elapsed_ms)
+        db::save_progress(
+            &conn,
+            &session_id,
+            &remaining_text,
+            elapsed_ms,
+            &category,
+            language.as_deref(),
+            &difficulty,
+            &mode,
+            duration_secs,
+        )
     })
 }
 
@@ -84,6 +99,22 @@ fn load_progress(state: State<AppState>, session_id: String) -> Result<Option<db
     safe_command!({
         let conn = state.conn.lock().map_err(|_| "db lock poisoned".to_string())?;
         db::load_progress(&conn, &session_id)
+    })
+}
+
+#[tauri::command]
+fn load_latest_progress(state: State<AppState>) -> Result<Option<db::Progress>, String> {
+    safe_command!({
+        let conn = state.conn.lock().map_err(|_| "db lock poisoned".to_string())?;
+        db::load_latest_progress(&conn)
+    })
+}
+
+#[tauri::command]
+fn clear_progress(state: State<AppState>, session_id: Option<String>) -> Result<(), String> {
+    safe_command!({
+        let conn = state.conn.lock().map_err(|_| "db lock poisoned".to_string())?;
+        db::clear_progress(&conn, session_id.as_deref())
     })
 }
 
@@ -139,6 +170,8 @@ fn main() {
             get_endless_chunk,
             save_progress,
             load_progress,
+            load_latest_progress,
+            clear_progress,
             finish_session,
             get_history
         ])

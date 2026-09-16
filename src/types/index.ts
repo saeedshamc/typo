@@ -13,8 +13,14 @@ export interface TextItem {
 }
 
 export interface Progress {
+  session_id: string;
   remaining_text: string;
   elapsed_ms: number;
+  category: Category;
+  language: CodeLanguage | null;
+  difficulty: Difficulty;
+  mode: SessionMode;
+  duration_secs: number;
   updated_at: string;
 }
 

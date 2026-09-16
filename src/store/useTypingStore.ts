@@ -34,6 +34,7 @@ interface TypingState {
                            // did the user have", independent of whether they cleaned them up after.
   elapsedMs: number;
   seenTextIds: number[]; // recent ids served, for endless-mode no-repeat
+  lastPracticeText: string | null;
 
   // ----- derived stats (recomputed on tick/finish) -----
   wpm: number;
@@ -42,6 +43,7 @@ interface TypingState {
   // ----- lifecycle -----
   autosaveHandle: ReturnType<typeof setInterval> | null;
   errorMessage: string | null;
+  pendingResume: Progress | null;
 
   setSelection: (partial: Partial<{
     category: Category;
@@ -52,7 +54,10 @@ interface TypingState {
   }>) => void;
 
   startSession: () => Promise<void>;
-  resumeIfAvailable: () => Promise<boolean>;
+  startPracticeAgain: () => void;
+  checkForResume: () => Promise<void>;
+  acceptResume: () => void;
+  dismissResume: () => Promise<void>;
   typeChar: (ch: string) => void;
   removeLastChar: () => void;
   tick: (deltaMs: number) => void;
@@ -65,6 +70,29 @@ interface TypingState {
 function newSessionId(): string {
   // Good enough for a local, non-networked identifier.
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function startAutosave(get: () => TypingState, set: (partial: Partial<TypingState>) => void) {
+  const existing = get().autosaveHandle;
+  if (existing) clearInterval(existing);
+  const handle = setInterval(() => {
+    const s = get();
+    if (s.phase !== "running") return;
+    const remaining = s.currentText.slice(s.typedChars.length);
+    invoke("save_progress", {
+      sessionId: s.sessionId,
+      remainingText: remaining,
+      elapsedMs: s.elapsedMs,
+      category: s.category,
+      language: s.language,
+      difficulty: s.difficulty,
+      mode: s.mode,
+      durationSecs: s.durationSecs,
+    }).catch(() => {
+      // Autosave failures should never interrupt typing.
+    });
+  }, AUTOSAVE_INTERVAL_MS);
+  set({ autosaveHandle: handle });
 }
 
 export const useTypingStore = create<TypingState>((set, get) => ({
@@ -83,17 +111,19 @@ export const useTypingStore = create<TypingState>((set, get) => ({
   totalErrors: 0,
   elapsedMs: 0,
   seenTextIds: [],
+  lastPracticeText: null,
 
   wpm: 0,
   accuracy: 100,
 
   autosaveHandle: null,
   errorMessage: null,
+  pendingResume: null,
 
   setSelection: (partial) => set(partial),
 
   startSession: async () => {
-    const { category, language, difficulty } = get();
+    const { category, language, difficulty, mode } = get();
     try {
       const item = await invoke<TextItem>("get_text", {
         category,
@@ -112,62 +142,119 @@ export const useTypingStore = create<TypingState>((set, get) => ({
         totalErrors: 0,
         elapsedMs: 0,
         seenTextIds: item.id >= 0 ? [item.id] : [],
+        lastPracticeText: mode === "practice" ? item.body : null,
         wpm: 0,
         accuracy: 100,
         errorMessage: null,
+        pendingResume: null,
       });
 
-      get().autosaveHandle && clearInterval(get().autosaveHandle!);
-      const handle = setInterval(() => {
-        const s = get();
-        if (s.phase !== "running") return;
-        const remaining = s.currentText.slice(s.typedChars.length);
-        invoke("save_progress", {
-          sessionId: s.sessionId,
-          remainingText: remaining,
-          elapsedMs: s.elapsedMs,
-        }).catch(() => {
-          // Autosave failures should never interrupt typing; surface
-          // nothing to the user, just try again next tick.
-        });
-      }, AUTOSAVE_INTERVAL_MS);
-      set({ autosaveHandle: handle });
+      startAutosave(get, set);
     } catch (err) {
-      // Backend/DB failure -> degrade gracefully with an in-memory
-      // fallback string instead of leaving the user stuck with no text.
+      const fallback =
+        "متن تمرین الان در دسترس نیست؛ این متن جایگزین برای ادامه جلسه استفاده می‌شود.";
       set({
         sessionId: newSessionId(),
         phase: "running",
-        currentText:
-          "practice text unavailable right now, offline fallback engaged for this session",
+        currentText: fallback,
         typedChars: [],
         correctCount: 0,
         incorrectCount: 0,
         totalErrors: 0,
         elapsedMs: 0,
-        errorMessage: `content load failed, using fallback text: ${String(err)}`,
+        lastPracticeText: mode === "practice" ? fallback : null,
+        errorMessage: `بارگذاری متن ناموفق بود؛ با متن جایگزین ادامه می‌دهیم. (${String(err)})`,
       });
+      startAutosave(get, set);
     }
   },
 
-  resumeIfAvailable: async () => {
-    const { sessionId } = get();
+  startPracticeAgain: () => {
+    const text = get().lastPracticeText;
+    if (!text) return;
+    set({
+      sessionId: newSessionId(),
+      phase: "running",
+      currentText: text,
+      typedChars: [],
+      correctCount: 0,
+      incorrectCount: 0,
+      totalErrors: 0,
+      elapsedMs: 0,
+      wpm: 0,
+      accuracy: 100,
+      errorMessage: null,
+      mode: "practice",
+    });
+    startAutosave(get, set);
+  },
+
+  checkForResume: async () => {
     try {
-      const progress = await invoke<Progress | null>("load_progress", { sessionId });
-      if (!progress) return false;
-      set({
-        currentText: progress.remaining_text,
-        elapsedMs: progress.elapsed_ms,
-        phase: "running",
-      });
-      return true;
+      const progress = await invoke<Progress | null>("load_latest_progress");
+      if (!progress || !progress.remaining_text.trim()) {
+        set({ pendingResume: null });
+        return;
+      }
+      set({ pendingResume: progress });
     } catch {
-      return false;
+      set({ pendingResume: null });
+    }
+  },
+
+  acceptResume: () => {
+    const progress = get().pendingResume;
+    if (!progress) return;
+
+    set({
+      sessionId: progress.session_id,
+      category: progress.category,
+      language: progress.language,
+      difficulty: progress.difficulty,
+      mode: progress.mode,
+      durationSecs: progress.duration_secs,
+      currentText: progress.remaining_text,
+      typedChars: [],
+      correctCount: 0,
+      incorrectCount: 0,
+      totalErrors: 0,
+      elapsedMs: progress.elapsed_ms,
+      seenTextIds: [],
+      lastPracticeText: progress.mode === "practice" ? progress.remaining_text : null,
+      wpm: 0,
+      accuracy: 100,
+      phase: "running",
+      pendingResume: null,
+      errorMessage: null,
+    });
+    startAutosave(get, set);
+  },
+
+  dismissResume: async () => {
+    const progress = get().pendingResume;
+    set({ pendingResume: null });
+    try {
+      await invoke("clear_progress", {
+        sessionId: progress?.session_id ?? null,
+      });
+    } catch {
+      // ignore dismiss failures
     }
   },
 
   typeChar: (ch: string) => {
-    const { currentText, typedChars, correctCount, incorrectCount, totalErrors, mode, seenTextIds, category, language, difficulty } = get();
+    const {
+      currentText,
+      typedChars,
+      correctCount,
+      incorrectCount,
+      totalErrors,
+      mode,
+      seenTextIds,
+      category,
+      language,
+      difficulty,
+    } = get();
     const index = typedChars.length;
     if (index >= currentText.length) return;
 
@@ -182,8 +269,6 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     const nextTyped = [...typedChars, ch];
     const nextCorrect = correctCount + (isCorrect ? 1 : 0);
     const nextIncorrect = incorrectCount + (isCorrect ? 0 : 1);
-    // Cumulative, never reduced by a later backspace -- this is the
-    // "how many mistakes did the user make" counter shown in the UI.
     const nextTotalErrors = totalErrors + (isCorrect ? 0 : 1);
 
     set({
@@ -192,14 +277,9 @@ export const useTypingStore = create<TypingState>((set, get) => ({
       incorrectCount: nextIncorrect,
       totalErrors: nextTotalErrors,
       wpm: calculateWpm(nextCorrect, get().elapsedMs),
-      // Accuracy counts every mistake ever made against the user, even
-      // ones they went back and fixed -- matches how typing.com /
-      // 10fastfingers report accuracy, and is more honest than only
-      // counting mistakes still visible on screen at the end.
       accuracy: calculateAccuracy(nextCorrect, nextCorrect + nextTotalErrors),
     });
 
-    // Reached end of the current chunk.
     if (nextTyped.length >= currentText.length) {
       if (mode === "endless") {
         invoke<TextItem>("get_endless_chunk", {
@@ -215,9 +295,11 @@ export const useTypingStore = create<TypingState>((set, get) => ({
             }));
           })
           .catch(() => {
-            // Even if the fetch fails, don't dead-end the session: keep
-            // the current (now-complete) text so the user can finish.
+            // keep current text if fetch fails
           });
+      } else if (mode === "practice") {
+        // Practice does not auto-finish when text ends; user ends via controls.
+        return;
       } else {
         get().finish();
       }
@@ -225,11 +307,6 @@ export const useTypingStore = create<TypingState>((set, get) => ({
   },
 
   removeLastChar: () => {
-    // Lets the user go back and fix a mistake -- backspace removes the
-    // last typed character and re-opens that position for retyping. If
-    // they'd rather not fix it and just keep going, they simply don't
-    // press backspace; typeChar() already lets typing continue past a
-    // wrong character (it stays visibly red) instead of blocking input.
     const { typedChars, currentText, correctCount, incorrectCount, totalErrors } = get();
     if (typedChars.length === 0) return;
     const removedIndex = typedChars.length - 1;
@@ -244,10 +321,6 @@ export const useTypingStore = create<TypingState>((set, get) => ({
       typedChars: nextTyped,
       correctCount: nextCorrect,
       incorrectCount: nextIncorrect,
-      // totalErrors is intentionally NOT reduced here -- a mistake that
-      // gets fixed still happened, and still counts toward the error
-      // total and the accuracy score. Only the live red/green display
-      // (correctCount/incorrectCount) rolls back.
       accuracy: calculateAccuracy(nextCorrect, nextCorrect + totalErrors),
     });
   },
@@ -285,7 +358,7 @@ export const useTypingStore = create<TypingState>((set, get) => ({
         durationSecs: Math.round(s.elapsedMs / 1000),
       });
     } catch (err) {
-      set({ errorMessage: `could not save session history: ${String(err)}` });
+      set({ errorMessage: `ذخیره تاریخچه سشن ممکن نشد: ${String(err)}` });
     }
   },
 

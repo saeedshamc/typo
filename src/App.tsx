@@ -1,19 +1,30 @@
+import { useEffect } from "react";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { CategorySelector } from "./components/CategorySelector";
 import { Timer } from "./components/Timer";
 import { TypingArea } from "./components/TypingArea";
 import { StatsPanel } from "./components/StatsPanel";
 import { SessionControls } from "./components/SessionControls";
+import { ResumePrompt } from "./components/ResumePrompt";
 import { useTypingStore } from "./store/useTypingStore";
 
 export default function App() {
   const phase = useTypingStore((s) => s.phase);
+  const checkForResume = useTypingStore((s) => s.checkForResume);
+
+  useEffect(() => {
+    void checkForResume();
+  }, [checkForResume]);
 
   return (
     <div className="app">
       <header>
         <h1>TypingTest</h1>
       </header>
+
+      <ErrorBoundary label="بازیابی سشن">
+        <ResumePrompt />
+      </ErrorBoundary>
 
       <ErrorBoundary label="انتخاب دسته‌بندی">
         <CategorySelector />
