@@ -19,7 +19,7 @@ mod db;
 
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::sync::Mutex;
-use tauri::State;
+use tauri::{Manager, State};
 
 pub struct AppState {
     pub conn: Mutex<rusqlite::Connection>,
@@ -168,7 +168,7 @@ fn main() {
             // (so it survives updates/reinstalls) and not in-memory
             // (so autosave actually protects against crashes).
             let app_dir = app
-                .path_resolver()
+                .path()
                 .app_data_dir()
                 .expect("no app data dir resolved");
             std::fs::create_dir_all(&app_dir).ok();
