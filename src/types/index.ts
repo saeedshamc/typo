@@ -1,7 +1,22 @@
-export type Category = "persian" | "english" | "code";
+export type Category = "persian" | "english" | "code" | "custom";
 export type CodeLanguage = "javascript" | "python" | "cpp" | "rust" | "php" | "kotlin";
 export type Difficulty = "beginner" | "intermediate" | "advanced";
 export type SessionMode = "timed" | "endless" | "practice";
+export type CaretStyle = "underline" | "block";
+
+export interface AppSettings {
+  fontSizePx: number;
+  soundEnabled: boolean;
+  caseSensitive: boolean;
+  caretStyle: CaretStyle;
+}
+
+export const DEFAULT_SETTINGS: AppSettings = {
+  fontSizePx: 22,
+  soundEnabled: false,
+  caseSensitive: true,
+  caretStyle: "underline",
+};
 
 export interface TextItem {
   id: number;

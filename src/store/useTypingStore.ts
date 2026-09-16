@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { invoke } from "@tauri-apps/api/core";
 import type {
+  AppSettings,
   Category,
   CodeLanguage,
   Difficulty,
@@ -9,8 +10,10 @@ import type {
   SessionPhase,
   TextItem,
 } from "../types";
+import { DEFAULT_SETTINGS } from "../types";
 import { calculateAccuracy, calculateWpm } from "../utils/wpmCalculator";
 import { charsMatch } from "../utils/rtlCompare";
+import { playErrorSound } from "../utils/sound";
 
 const AUTOSAVE_INTERVAL_MS = 3000;
 
@@ -59,6 +62,9 @@ interface TypingState {
   errorMessage: string | null;
   pendingResume: Progress | null;
   suggestedDifficulty: Difficulty | null;
+  settings: AppSettings;
+  settingsOpen: boolean;
+  customText: string;
 
   setSelection: (partial: Partial<{
     category: Category;
@@ -67,6 +73,11 @@ interface TypingState {
     mode: SessionMode;
     durationSecs: number;
   }>) => void;
+
+  setCustomText: (text: string) => void;
+  loadSettings: () => Promise<void>;
+  updateSettings: (partial: Partial<AppSettings>) => void;
+  setSettingsOpen: (open: boolean) => void;
 
   startSession: () => Promise<void>;
   startPracticeAgain: () => void;
@@ -136,13 +147,77 @@ export const useTypingStore = create<TypingState>((set, get) => ({
   errorMessage: null,
   pendingResume: null,
   suggestedDifficulty: null,
+  settings: { ...DEFAULT_SETTINGS },
+  settingsOpen: false,
+  customText: "",
 
   setSelection: (partial) => set(partial),
+
+  setCustomText: (text) => set({ customText: text }),
+
+  setSettingsOpen: (open) => set({ settingsOpen: open }),
+
+  loadSettings: async () => {
+    try {
+      const raw = await invoke<Record<string, string>>("get_settings");
+      set({
+        settings: {
+          fontSizePx: Number(raw.fontSizePx ?? DEFAULT_SETTINGS.fontSizePx),
+          soundEnabled: (raw.soundEnabled ?? String(DEFAULT_SETTINGS.soundEnabled)) === "true",
+          caseSensitive: (raw.caseSensitive ?? String(DEFAULT_SETTINGS.caseSensitive)) !== "false",
+          caretStyle: raw.caretStyle === "block" ? "block" : "underline",
+        },
+      });
+    } catch {
+      // keep defaults
+    }
+  },
+
+  updateSettings: (partial) => {
+    const next = { ...get().settings, ...partial };
+    set({ settings: next });
+    const entries: [string, string][] = [
+      ["fontSizePx", String(next.fontSizePx)],
+      ["soundEnabled", String(next.soundEnabled)],
+      ["caseSensitive", String(next.caseSensitive)],
+      ["caretStyle", next.caretStyle],
+    ];
+    for (const [key, value] of entries) {
+      invoke("set_setting", { key, value }).catch(() => {});
+    }
+  },
 
   clearDifficultySuggestion: () => set({ suggestedDifficulty: null }),
 
   startSession: async () => {
-    const { category, language, difficulty, mode } = get();
+    const { category, language, difficulty, mode, customText } = get();
+
+    if (category === "custom") {
+      const body = customText.trim();
+      if (!body) {
+        set({ errorMessage: "برای متن سفارشی، ابتدا متن را وارد کنید." });
+        return;
+      }
+      set({
+        sessionId: newSessionId(),
+        phase: "running",
+        currentText: body,
+        typedChars: [],
+        correctCount: 0,
+        incorrectCount: 0,
+        totalErrors: 0,
+        elapsedMs: 0,
+        seenTextIds: [],
+        lastPracticeText: mode === "practice" ? body : null,
+        wpm: 0,
+        accuracy: 100,
+        errorMessage: null,
+        pendingResume: null,
+      });
+      startAutosave(get, set);
+      return;
+    }
+
     try {
       const item = await invoke<TextItem>("get_text", {
         category,
@@ -278,17 +353,17 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     if (index >= currentText.length) return;
 
     const expected = currentText[index];
-    // charsMatch does NOT lowercase either side -- "A" typed for expected
-    // "a" (or vice versa) is a mismatch. Case sensitivity is the default
-    // behavior of JS string equality; the only normalization charsMatch
-    // applies is for Persian presentation-form lookalikes (see
-    // rtlCompare.ts), which never touches Latin letter casing.
-    const isCorrect = charsMatch(expected, ch);
+    const caseSensitive = get().settings.caseSensitive;
+    const isCorrect = charsMatch(expected, ch, caseSensitive);
 
     const nextTyped = [...typedChars, ch];
     const nextCorrect = correctCount + (isCorrect ? 1 : 0);
     const nextIncorrect = incorrectCount + (isCorrect ? 0 : 1);
     const nextTotalErrors = totalErrors + (isCorrect ? 0 : 1);
+
+    if (!isCorrect && get().settings.soundEnabled) {
+      playErrorSound();
+    }
 
     set({
       typedChars: nextTyped,
@@ -330,7 +405,11 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     if (typedChars.length === 0) return;
     const removedIndex = typedChars.length - 1;
     const removedChar = typedChars[removedIndex];
-    const wasCorrect = charsMatch(currentText[removedIndex], removedChar);
+    const wasCorrect = charsMatch(
+      currentText[removedIndex],
+      removedChar,
+      get().settings.caseSensitive,
+    );
 
     const nextTyped = typedChars.slice(0, -1);
     const nextCorrect = Math.max(0, correctCount - (wasCorrect ? 1 : 0));

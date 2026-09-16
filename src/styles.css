@@ -17,10 +17,74 @@ body {
   font-family: "Vazirmatn", "Segoe UI", sans-serif;
 }
 
-.app {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-header h1 {
+  margin: 0;
+}
+
+.settings-toggle {
+  border-color: var(--muted);
+}
+
+.settings-panel {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.settings-header h3 {
+  margin: 0;
+}
+
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.custom-text-box {
+  margin: 0.75rem 0;
+}
+
+.custom-text-box label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.35rem;
+}
+
+.custom-text-box textarea {
+  width: 100%;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid #3a3a50;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.caret-block .char-cursor {
+  border-bottom: none;
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 fieldset {

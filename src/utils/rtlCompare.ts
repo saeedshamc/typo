@@ -90,8 +90,14 @@ export function toBaseChar(ch: string): string {
   return LOOKALIKE_EQUIVALENTS[presentationNormalized] ?? presentationNormalized;
 }
 
-/** True if `typed` should count as a correct match for `expected`. */
-export function charsMatch(expected: string, typed: string): boolean {
+export function charsMatch(
+  expected: string,
+  typed: string,
+  caseSensitive = true,
+): boolean {
+  if (!caseSensitive) {
+    return toBaseChar(expected).toLowerCase() === toBaseChar(typed).toLowerCase();
+  }
   return toBaseChar(expected) === toBaseChar(typed);
 }
 

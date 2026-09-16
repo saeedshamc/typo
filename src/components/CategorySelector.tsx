@@ -5,6 +5,7 @@ const CATEGORIES: { value: Category; label: string }[] = [
   { value: "persian", label: "متن فارسی" },
   { value: "english", label: "English text" },
   { value: "code", label: "کد برنامه‌نویسی" },
+  { value: "custom", label: "متن من" },
 ];
 
 const CODE_LANGUAGES: { value: CodeLanguage; label: string }[] = [
@@ -31,17 +32,29 @@ const MODES: { value: SessionMode; label: string }[] = [
 const DURATIONS = [15, 30, 60, 120];
 
 export function CategorySelector() {
-  const { category, language, difficulty, mode, durationSecs, phase, setSelection, startSession } =
-    useTypingStore((s) => ({
-      category: s.category,
-      language: s.language,
-      difficulty: s.difficulty,
-      mode: s.mode,
-      durationSecs: s.durationSecs,
-      phase: s.phase,
-      setSelection: s.setSelection,
-      startSession: s.startSession,
-    }));
+  const {
+    category,
+    language,
+    difficulty,
+    mode,
+    durationSecs,
+    phase,
+    customText,
+    setSelection,
+    setCustomText,
+    startSession,
+  } = useTypingStore((s) => ({
+    category: s.category,
+    language: s.language,
+    difficulty: s.difficulty,
+    mode: s.mode,
+    durationSecs: s.durationSecs,
+    phase: s.phase,
+    customText: s.customText,
+    setSelection: s.setSelection,
+    setCustomText: s.setCustomText,
+    startSession: s.startSession,
+  }));
 
   const locked = phase === "running" || phase === "paused";
   const canStart = phase === "idle" || phase === "finished";
@@ -54,7 +67,12 @@ export function CategorySelector() {
           <button
             key={c.value}
             className={category === c.value ? "active" : ""}
-            onClick={() => setSelection({ category: c.value, language: c.value === "code" ? "javascript" : null })}
+            onClick={() =>
+              setSelection({
+                category: c.value,
+                language: c.value === "code" ? "javascript" : null,
+              })
+            }
           >
             {c.label}
           </button>
@@ -76,18 +94,34 @@ export function CategorySelector() {
         </fieldset>
       )}
 
-      <fieldset disabled={locked}>
-        <legend>سطح دشواری</legend>
-        {DIFFICULTIES.map((d) => (
-          <button
-            key={d.value}
-            className={difficulty === d.value ? "active" : ""}
-            onClick={() => setSelection({ difficulty: d.value })}
-          >
-            {d.label}
-          </button>
-        ))}
-      </fieldset>
+      {category === "custom" && (
+        <div className="custom-text-box">
+          <label htmlFor="custom-text">متن دلخواه را بچسبانید</label>
+          <textarea
+            id="custom-text"
+            disabled={locked}
+            rows={5}
+            value={customText}
+            onChange={(e) => setCustomText(e.target.value)}
+            placeholder="متن تمرین خود را اینجا وارد کنید..."
+          />
+        </div>
+      )}
+
+      {category !== "custom" && (
+        <fieldset disabled={locked}>
+          <legend>سطح دشواری</legend>
+          {DIFFICULTIES.map((d) => (
+            <button
+              key={d.value}
+              className={difficulty === d.value ? "active" : ""}
+              onClick={() => setSelection({ difficulty: d.value })}
+            >
+              {d.label}
+            </button>
+          ))}
+        </fieldset>
+      )}
 
       <fieldset disabled={locked}>
         <legend>حالت</legend>

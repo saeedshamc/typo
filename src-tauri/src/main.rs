@@ -143,6 +143,23 @@ fn get_history(state: State<AppState>, limit: i64) -> Result<Vec<db::SessionReco
     })
 }
 
+#[tauri::command]
+fn get_settings(state: State<AppState>) -> Result<std::collections::HashMap<String, String>, String> {
+    safe_command!({
+        let conn = state.conn.lock().map_err(|_| "db lock poisoned".to_string())?;
+        let pairs = db::get_all_settings(&conn)?;
+        Ok(pairs.into_iter().collect())
+    })
+}
+
+#[tauri::command]
+fn set_setting(state: State<AppState>, key: String, value: String) -> Result<(), String> {
+    safe_command!({
+        let conn = state.conn.lock().map_err(|_| "db lock poisoned".to_string())?;
+        db::set_setting(&conn, &key, &value)
+    })
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_log::Builder::default().build())
@@ -173,7 +190,9 @@ fn main() {
             load_latest_progress,
             clear_progress,
             finish_session,
-            get_history
+            get_history,
+            get_settings,
+            set_setting
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

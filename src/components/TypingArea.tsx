@@ -2,14 +2,15 @@ import { useEffect, useRef } from "react";
 import { useTypingStore } from "../store/useTypingStore";
 import { charsMatch, isRtlText } from "../utils/rtlCompare";
 
+const WINDOW_RADIUS = 120;
+
 /**
  * Why a hidden <input> instead of raw keydown listeners on a div:
- * Persian input often goes through OS-level composition (especially with
- * certain keyboard layouts / IME setups). Listening to keydown/keyCode
- * directly is unreliable for composed input and for correctly handling
- * backspace across multi-byte sequences. Using a real input's `value` and
- * diffing against what we've already consumed is the robust approach, and
- * it's what typingtest-style sites do under the hood as well.
+ * Persian input often goes through OS-level composition. Using a real
+ * input's value and diffing is the robust approach for IME/backspace.
+ *
+ * For long endless sessions we only render a window of characters around
+ * the caret so the DOM does not grow without bound.
  */
 export function TypingArea() {
   const currentText = useTypingStore((s) => s.currentText);
@@ -17,9 +18,12 @@ export function TypingArea() {
   const phase = useTypingStore((s) => s.phase);
   const typeChar = useTypingStore((s) => s.typeChar);
   const removeLastChar = useTypingStore((s) => s.removeLastChar);
+  const fontSizePx = useTypingStore((s) => s.settings.fontSizePx);
+  const caretStyle = useTypingStore((s) => s.settings.caretStyle);
+  const caseSensitive = useTypingStore((s) => s.settings.caseSensitive);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const shadowValueRef = useRef(""); // mirrors what the store has consumed
+  const shadowValueRef = useRef("");
 
   useEffect(() => {
     shadowValueRef.current = "";
@@ -50,19 +54,28 @@ export function TypingArea() {
   };
 
   const rtl = isRtlText(currentText);
+  const caret = typedChars.length;
+  const start = Math.max(0, caret - WINDOW_RADIUS);
+  const end = Math.min(currentText.length, caret + WINDOW_RADIUS);
+  const chars = currentText.slice(start, end).split("");
 
   return (
     <div
-      className="typing-area"
+      className={`typing-area caret-${caretStyle}`}
       dir={rtl ? "rtl" : "ltr"}
+      style={{ fontSize: `${fontSizePx}px` }}
       onClick={focusInput}
       role="presentation"
     >
       <div className="typing-text" aria-hidden="true">
-        {currentText.split("").map((ch, i) => {
+        {start > 0 && <span className="char-pending">…</span>}
+        {chars.map((ch, offset) => {
+          const i = start + offset;
           let className = "char-pending";
           if (i < typedChars.length) {
-            className = charsMatch(ch, typedChars[i]) ? "char-correct" : "char-incorrect";
+            className = charsMatch(ch, typedChars[i], caseSensitive)
+              ? "char-correct"
+              : "char-incorrect";
           }
           if (i === typedChars.length) className += " char-cursor";
           return (
@@ -71,6 +84,7 @@ export function TypingArea() {
             </span>
           );
         })}
+        {end < currentText.length && <span className="char-pending">…</span>}
       </div>
       <input
         ref={inputRef}
